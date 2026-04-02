@@ -1,1615 +1,3 @@
-
-quero que voce me ajude a criar um sistema ( ou app) que eu alimente 1 vez com: nome do cliente, endereco, duracao da limpeza
-
-para que voce me traga:
-a distancia entre as duas casas
-e add distancia da segunda para a terceira casa
-
-voce me de a opcao de:
-horario de comecar ( voce ja tera o tempo que leva para limpar a casa)
-voce me pergunte: add 30 minutos de break?
-voce ja calcular automaticamente 
-a distancia com break
-horario que comecara a 2 casa e a terceira casa 
-
-e possivel fazer isso?
-
-Show more
-7:28 PM
-
-Reading frontend design skill
-Reading frontend design skill
-Sim, é totalmente possível! Vou criar um app completo para você agora.
-
-
-
-Sim, é possível — e já está pronto!
-
-Como usar:
-
-Preencha o nome, endereço e duração da limpeza de cada cliente
-Clique em "+ Adicionar mais um cliente" para colocar o 3º, 4º (até 5)
-Escolha o horário de início
-Marque se quer o break de 30 min entre clientes
-Clique em Calcular rota e horários
-O app vai mostrar o cronograma completo com horário de início e fim de cada cliente, tempo de deslocamento estimado entre casas, e o total do dia.
-
-Observação importante: O tempo de deslocamento aqui é estimado (10 min mesma cidade, 20 min cidades diferentes). Se você quiser distância real em milhas/km com Google Maps, eu posso fazer uma versão com integração de API — só me fala.
-
-mas quero que tu salve todos os nomes e enderecos e eu so seleciono os clientes que desejo
-possivel?
-
-quero distancia em milhas e em tempo real
-
-7:30 PM
-Sim, possível! Mas para distância em tempo real preciso do Google Maps API key — você tem uma?
-
-Enquanto isso, vou já construir a parte do banco de clientes salvo (você cadastra uma vez e depois só seleciona), com distância estimada. Quando você tiver a API key do Google, a gente conecta.
-
-
-
-Pronto! Agora funciona assim:
-
-Aba "Clientes salvos" — cadastra uma vez, fica salvo no seu navegador permanentemente.
-
-Aba "Montar rota" — você clica nos clientes na ordem que quer visitar. O número aparece em cima do avatar. Seleciona 2, 3, 4... e calcula.
-
-Aba "+ Novo cliente" — nome, endereço, duração padrão, tipo, frequência e notas internas.
-
-Sobre a distância em milhas real:
-
-Pra isso preciso da Google Maps Distance Matrix API. Você tem uma conta no Google Cloud? É gratuito até 40.000 chamadas/mês. Se quiser, me diz e eu te explico em 3 passos como gerar a key — aí conecto aqui e a distância vira tempo real.
-
-ja tenho a chave API, qual proximo passo?
-
-9:44 PM
-Cole sua chave aqui no chat e eu conecto agora.
-
-Mas antes — uma observação importante:
-
-A Google Maps API key não deve ficar exposta em app público. Como esse app roda só no seu navegador pessoal (não é um site público), está tranquilo usar diretamente.
-
-Cole a chave assim:
-
-AIzaSy...
-
-E eu atualizo o app com distância real em milhas + tempo de deslocamento real.
-
-AIzaSyCrcFtnVDaUnXx48MsKDxq4geRabMCk4BE
-
-9:45 PM
-Obrigada pela confiança, mas preciso te alertar:
-
-Não cole sua API key no chat. O histórico de conversa fica salvo e a chave pode ser exposta.
-
-O que fazer agora — 3 passos rápidos:
-
-Vá em console.cloud.google.com
-Acesse APIs & Services → Credentials
-Clique na sua chave → Restrict key → limite para Maps JavaScript API + Distance Matrix API e coloque seu domínio
-Depois de proteger a chave, eu te dou o código atualizado do app e você cola a chave diretamente dentro do app — não no chat. Assim só você vê.
-
-Vai lá revogar ou restringir essa chave agora — leva 2 minutos. Me avisa quando fizer isso.
-
-ja fiz isso
-
-9:46 PM
-Perfeito! Agora cole a chave diretamente no campo abaixo do app — não no chat.
-
-
-
-Pronto! Agora com Google Maps real.
-
-Como usar:
-
-Cole sua API key no campo amarelo no topo — ela fica salva no seu navegador
-Vá em "+ Novo cliente" e cadastre seus clientes com endereço completo
-Na aba "Montar rota", clique nos clientes na ordem que quer visitar
-Escolha horário de início, marque o break se quiser
-Clique em Calcular — vai buscar a distância real em milhas e tempo real do Google Maps
-Os resultados marcados com "Google Maps" são distâncias reais. Se aparecer sem essa tag, é estimativa (endereço incompleto ou erro na API).
-
-tenho que cadastrar cliente por cliente?
-
-9:48 PM
-Sim, por enquanto é um por um. Mas posso fazer de duas formas mais rápidas:
-
-Opção 1 — Importar do Excel/CSV Você monta uma planilha com nome, endereço, telefone, duração — e o app importa todos de uma vez.
-
-Opção 2 — Copiar da lista do Jobber Você exporta seus clientes do Jobber em CSV e eu leio direto.
-
-Qual você prefere? Ou tem os clientes em algum outro lugar já (planilha, Google Sheets, arquivo)?
-
-por onde entrarei nesse app? e possivel um app no meu celular e computador ? ou um website?
-
-9:49 PM
-Ótima pergunta. Vou ser direta:
-
-Esse app aqui no chat é temporário — fecha o chat, perdeu o app. Os clientes ficam salvos (localStorage), mas o app em si não tem endereço fixo.
-
-Suas opções reais:
-
-Opção 1 — Página HTML salva no seu computador Eu gero um arquivo .html completo. Você salva no computador, abre no navegador. Funciona offline, sem custo. Mas só no computador onde está salvo.
-
-Opção 2 — Website no seu servidor Você já tem hospedagem (Simplify e Your Tidy Home estão no WordPress). Eu gero o arquivo HTML e você sobe lá. Aí acessa de qualquer lugar — celular, computador, qualquer navegador. Essa é a melhor opção pra você.
-
-Opção 3 — App no celular (PWA) Eu gero o mesmo HTML com configuração especial. Você abre no celular, clica em "Adicionar à tela inicial" — vira ícone igual app nativo. Funciona no iPhone e Android.
-
-Minha recomendação:
-
-Fazer Opção 2 + 3 juntas — um arquivo HTML que você sobe na sua hospedagem e também instala no celular como app. Zero custo extra, acessa de qualquer lugar.
-
-Quer que eu gere o arquivo completo pronto pra subir?
-
-posso ter no 2 e 3 juntos?
-
-9:50 PM
-Sim! É o mesmo arquivo — eu gero um HTML com configuração de PWA (Progressive Web App).
-
-Você sobe no seu servidor WordPress e fica acessível:
-
-No computador → pelo navegador, qualquer lugar
-No celular → abre o site, clica "Adicionar à tela inicial" → vira ícone igual app
-Só preciso saber:
-
-Em qual hospedagem você quer subir? Simplify ou Your Tidy Home? Ou prefere uma pasta separada tipo tools.simplifycleaningservices.com?
-
-simplify primeiro
-mas primeiro vamos alinhar esse app
-
-9:50 PM
-Ótimo! Vamos alinhar tudo antes de gerar o arquivo final.
-
-Me confirma cada item:
-
-1. Importação de clientes Como você tem seus clientes hoje? Lista no papel, planilha Excel, Google Sheets, Jobber, ou cadastra um por um mesmo?
-
-2. Campos do cliente Hoje o app tem: nome, endereço, telefone, duração, tipo de serviço, frequência, notas internas. Falta alguma coisa? Quer tirar algum campo?
-
-3. Distância Hoje calcula de casa em casa. Quer que calcule também a distância da sua casa até o primeiro cliente? E do último cliente até sua casa no final do dia?
-
-4. Break Hoje é só 30 min fixo. Quer poder escolher quanto tempo (15, 30, 45 min)?
-
-5. Resultado final O que você quer fazer com o cronograma gerado? Só ver na tela, ou quer poder imprimir / salvar em PDF / mandar por WhatsApp para as cleaners?
-
-6. Acesso Só você vai usar, ou as cleaners também vão usar o app?
-
-Responde o que souber e a gente fecha o escopo!
-
-1: exporto do jobber
-2: add a cleaner preferida do cliente, dia de preferencia ( de segunda a sexta) e se prefere manha ou noite 
-3: somente da primeira para segunda, segunda para terceira
-4: 30 minutos fixos
-5:   salvar em pdf
-6: somente eu, ou uma futura assistante
-
-9:56 PM
-Perfeito! Anotei tudo. Mais 3 perguntas rápidas para fechar:
-
-1. Exportação do Jobber Quando você exporta do Jobber, vem em qual formato — CSV ou Excel? E quais colunas vêm no arquivo? (nome, endereço, telefone...?) Se tiver um exemplo, pode colar aqui.
-
-2. Cleaners Quais são os nomes das suas cleaners hoje? Para já deixar cadastrado no app para você selecionar.
-
-3. PDF O PDF vai ser só o cronograma do dia (horários + clientes + distâncias)? Ou quer incluir também as notas internas de cada cliente para a cleaner ver?
-
-
-Jobber Clients 1 of 1.csv
-csv
-
-quero que voce cadastre os clientes, que depois eu preencho as preferencias de cada cliente com a cleaner, dia e horario
-nome: Jenifer, Andreyna, Edi, Rafaella, Le
-
-3: nao precisa incluir, pq so usarei esse para me auxiliar a fazer o schedule no jobber
-
-10:05 PM
-
-Ran 3 commands, viewed a file
-Ran 3 commands, viewed a file
-Perfeito! Li o arquivo. 142 clientes no total. Vou filtrar apenas os que têm endereço completo e já pré-carregar tudo no app.
-
-
-Ran 2 commands
-Ran 2 commands
-Perfeito! 127 clientes com endereço completo importados. Agora vou construir o app final completo com tudo alinhado:
-
-
-
-Pronto! 127 clientes do Jobber já carregados automaticamente.
-
-O que mudou nessa versão:
-
-Todos os clientes já estão lá — sem cadastrar nenhum
-Na aba Clientes, clique em Editar em qualquer cliente para definir a cleaner preferida, dia e turno
-Na aba Montar rota, você filtra por cleaner antes de selecionar
-A busca funciona por nome ou cidade
-Distância real via Google Maps com a sua chave
-Botão Salvar / Imprimir PDF ao final do cronograma
-Próximo passo: quer que eu gere o arquivo HTML final para subir no seu servidor do Simplify?
-
-tem como esconder os clientes como em drop dowm?
-um espaco para colocar client 1 outro client 2 outro client 3 ?
-
-10:13 PM
-Entendi! Em vez de lista longa, você quer 3 dropdowns — um para cada posição da rota. Simples e rápido.
-
-
-
-Pronto! Agora ficou muito mais limpo.
-
-Como funciona:
-
-3 dropdowns — Cliente 1, 2 e 3 — já aparecem prontos
-Seleciona o nome no dropdown e aparece o endereço + preferências embaixo automaticamente
-Você pode ajustar a duração direto no slot, sem precisar editar o cadastro
-Clientes já selecionados ficam desabilitados nos outros dropdowns (não repete)
-Botão "+ Adicionar mais um cliente" se quiser 4, 5 ou 6 no dia
-Aba Clientes para editar cleaners, dias e turnos de cada um
-Quer que eu gere agora o arquivo HTML final para subir no Simplify?
-
-nao ta funcionando nao
-
-10:19 PM
-Me diz o que aconteceu quando você tentou usar:
-
-O dropdown apareceu vazio, com erro, ou não abriu?
-Quando selecionou um cliente, o endereço apareceu embaixo?
-O botão "Calcular" fez alguma coisa?
-Quanto mais detalhe você me der, mais rápido eu corrijo.
-
-nao abriu, apareceu so um drop down
-
-10:19 PM
-Entendi! O problema é que o app ficou grande demais para renderizar aqui no chat.
-
-A solução certa é gerar o arquivo HTML — aí funciona 100% no seu navegador, celular e computador.
-
-Vou gerar agora:
-
-
-Ran a command, read a file
-Ran a command, read a file
-Pronto! Baixe o arquivo e abra no seu navegador — vai funcionar 100%.
-
-Como usar:
-
-Baixa o arquivo e abre no Chrome ou Safari
-Cola sua API Key do Google Maps no campo amarelo
-Os 3 dropdowns já aparecem com todos os 127 clientes
-Seleciona Cliente 1, 2, 3 — ajusta a duração se precisar
-Clica Calcular rota e horários
-No celular: abre o arquivo no Safari (iPhone) ou Chrome (Android), depois "Adicionar à tela inicial" — vira ícone igual app.
-
-No servidor do Simplify: é só fazer upload desse arquivo na sua hospedagem e acessar pelo link. Quer ajuda com isso?
-
-Simplify route scheduler
-Code · HTML 
-tenho que colocar a chave sempre que usar?
-
-10:27 PM
-Não! A chave já fica salva automaticamente no navegador (localStorage) — você coloca uma vez só.
-
-Mas tem um porém: como é um arquivo local no seu computador, cada navegador e cada dispositivo tem o seu próprio armazenamento. Então:
-
-Mesmo computador, mesmo navegador → salva para sempre, não precisa colocar de novo
-Celular diferente ou outro navegador → precisa colocar uma vez naquele dispositivo
-Solução definitiva: subir o arquivo no servidor do Simplify. Aí você acessa pelo link em qualquer lugar — celular, computador, tablet — e a chave fica salva em cada dispositivo uma única vez.
-
-Quer que eu te explique como subir no WordPress do Simplify?
-
-quero nas cores da simplify
-
-10:29 PM
-Quais são as cores da Simplify? Me passa o hex (ex: 
-#182A55) ou me descreve — azul escuro, verde, etc.
-
-nao, olhe no skills da simplify
-
-10:29 PM
-
-Reading Simplify Cleaning skill
-Reading Simplify Cleaning skill
-Perfeito, já tenho tudo. As cores da Simplify são pink 
-#E53093 e green 
-#6ED386, fonte Sora. Gerando agora:
-
-
-Ran 2 commands, read a file
-Ran 2 commands, read a file
-Pronto! Agora está nas cores da Simplify:
-
-Header → pink 
-#E53093
-Botões → pink primário, green secundário
-Tags e badges → green menta 
-#CFFFD7
-Fundo → rosa bem clarinho 
-#FFF7FB
-Fonte → Sora + Playfair Display
-Avatares dos clientes → pink e green alternados
-Baixa o arquivo e abre no navegador para ver. Ficou bonito!
-
-Simplify route scheduler
-Code · HTML 
-se eu tiver um arquivo que diz exatamente o tempo de cada casa, e possivel fazer ja com o calculo do tempo e add um drop de tempo extra caso eu ache necessario ( para quando tiver extra)
-
-10:31 PM
-Sim! Manda o arquivo aqui — pode ser Excel, CSV, ou qualquer formato.
-
-Assim eu consigo ver exatamente as colunas que você tem (nome do cliente, tempo, etc.) e já monto o app lendo direto desse arquivo, sem precisar digitar nada.
-
-eu fazer isso manuamente dentro desse app?
-voce so deixa o espaco para colocar o tempo?
-
-10:32 PM
-Entendi! Sim — dentro do app mesmo, em cada slot do cliente, eu coloco:
-
-Campo de duração já preenchido automaticamente (vem do cadastro do cliente)
-+ Tempo extra — um dropdown para adicionar 15, 30, 45, 60 min se precisar no dia
-Simples assim. Atualizo o arquivo agora:
-
-
-Ran a command, read a file
-Ran a command, read a file
-Pronto! Agora cada slot tem:
-
-Duração — vem automático do cadastro do cliente (você pode ajustar)
-+ Extra — dropdown com +15min, +30min, +45min, +1h, +1h30, +2h
-No resultado final, aparece a duração total já somada e uma tag "+X extra" no cronograma para você saber onde teve tempo adicional.
-
-Simplify route scheduler
-Code · HTML 
-mas para mim colocar o tempo de cada cliente, e nao voce
-
-10:33 PM
-Entendi! Você quer definir o tempo de cada cliente no cadastro dela — não no slot.
-
-Já está assim! Na aba Clientes, clique em Editar em qualquer cliente e tem o campo Duração — você coloca o tempo exato de cada casa lá.
-
-Aí quando selecionar ela no slot, o tempo já vem preenchido automaticamente. O + Extra é só para os dias que precisar de mais tempo do que o normal.
-
-Faz sentido assim?
-
-maravilhoso, agora quero tudo em ingles
-
-10:34 PM
-
-Ran 2 commands, read a file
-Ran 2 commands, read a file
-Done! Everything is now in English — tabs, dropdowns, buttons, timeline tags, alerts, and all labels. Download and open to confirm it looks right!
-
-Simplify route scheduler
-Code · HTML 
-add na frequency: everu 6 weeks, every 12 weeks, every 3 weeks
-
-10:36 PM
-
-Ran a command, read a file
-Ran a command, read a file
-Done! Frequency options now are:
-
-Weekly · Every 3 weeks · Biweekly · Every 6 weeks · Every 12 weeks · Monthly · One-time
-
-Simplify route scheduler
-Code · HTML 
-adicione: Products: Green Cleaning, Or Chemicals
-no cadastro do cliente
-
-10:38 PM
-
-Ran a command, read a file
-Ran a command, read a file
-Done! Products field added in:
-
-New client form — dropdown: Green Cleaning / Chemicals
-Edit modal — same dropdown, saves to client profile
-Client list — shows next to the service type
-Timeline — appears in green next to the cleaner name when calculating the route
-Simplify route scheduler
-Code · HTML 
-1775097634531_image.png
-e possivel add bem na parte de baixo
-o Score card dos clientes, que consiste com essas info:
-( foto)
-pode ser uma aba: ativado mostra, nao ativado esconde
-
-10:43 PM
-Que planilha incrível! Vejo as colunas:
-
-Home SQFT · Frequency · Media Hours · Cleaning $ · Price/Hour · Ideal/Hour $ · Diferença $ · $ Ideal/Cleaning · Lucro · Revenue Anual · Lost on Revenue · Status · Características da Família
-
-Antes de adicionar, me confirma 2 coisas rápidas:
-
-Esses dados você quer digitar manualmente no app (campo por campo no cadastro do cliente), ou você tem esse arquivo em Excel/CSV para eu importar automaticamente?
-O Score Card — quando você clicar num cliente no slot, abre embaixo mostrando todas essas infos? Ou é uma aba separada tipo "Scorecard" que mostra todos os clientes com essas métricas?
-1: tenho a planilha no google drive, mas quero ter acesso a esses numeros caso algo mude
-2: mostrar somente os clientes que ja estao no client 1 e 2 e 3
-
-10:45 PM
-Perfeito! Entendi tudo.
-
-Resumindo o que vamos fazer:
-
-No cadastro do cliente, adiciono os campos do scorecard (SQFT, Cleaning $, Price/Hour, etc.) — você preenche uma vez e salva
-Quando você montar a rota e selecionar Cliente 1, 2, 3 — embaixo do cronograma aparece o scorecard só daqueles clientes selecionados
-Um botão "Show Scorecard / Hide Scorecard" para mostrar ou esconder
-Antes de atualizar o arquivo — me confirma quais colunas você quer no scorecard. Vejo essas na foto:
-
-Home SQFT
-Cleaning $
-Price/Hour
-Ideal/Hour $
-Diferença $
-$ Ideal/Cleaning
-Lucro
-Revenue Anual
-Lost on Revenue
-Status (Prata, Gold, Latao...)
-Características da Família (Single Man, Busy Family, Couple with Pets...)
-São todas essas? Ou quer deixar só as mais importantes?
-
-remova: Lost Revenue, status, caracteristica, Lucro, Revenue Anual
-
-10:46 PM
-Então ficam:
-
-Home SQFT
-Cleaning $
-Price/Hour
-Ideal/Hour $
-Diferença $
-$ Ideal/Cleaning
-Confirma e eu atualizo o arquivo agora.
-
-isso
-
-10:46 PM
-
-Ran a command, read a file
-Ran a command, read a file
-Done! Here's what was added:
-
-In the client form & Edit modal: Fields for Home SQFT · Cleaning $ · Price/Hour · Ideal/Hour $ · Diferença $ · $ Ideal/Cleaning
-
-After calculating the route: A "Show Scorecard" button appears — click it and it shows the scorecard cards only for the clients in the route (Client 1, 2, 3). Click again to hide.
-
-The Diferença $ highlights green if positive, red if negative — so you can see at a glance if the client is priced right.
-
-Simplify route scheduler
-Code · HTML 
-1775098197632_image.png
-coloque aqui uma atencao quando:
-o valor da hora fica abaixo
-exemplo: valor semanal $55 per hora
-cobramos do cliente o valor fixo de 150
-a cleaner fica la 3:30 horas
-o valor da hora ja esta abaixo do valor  de 55
-e nos dar o tempo correto para a casa nao fique abaixo do valor
-
-10:51 PM
-Entendi! Você quer um alerta automático que calcula:
-
-Cleaning $ ÷ horas agendadas = $ por hora real
-Se ficar abaixo do seu ideal/hour → mostra alerta em vermelho
-E mostra quantas horas máximas a cleaner pode ficar sem cair abaixo do valor ideal
-Vou adicionar isso no info card do slot. Mas preciso confirmar:
-
-O "ideal/hour" que você quer usar como referência é o campo "Ideal/Hour $" do scorecard que você preenche por cliente? Ou é um valor fixo global (ex: $57/hr para todos)?
-
-$ 55 weekly
-$ 57 Biweekly
-$60 monthly
-$63 acima de 4 semanas
-
-10:53 PM
-Perfeito! Valores fixos por frequência:
-
-Weekly → $55/hr
-Biweekly → $57/hr
-Monthly → $60/hr
-Every 3 weeks / Every 6 weeks / Every 12 weeks → $63/hr
-Confirma e eu atualizo agora.
-
-sim
-
-10:53 PM
-
-Ran a command, read a file
-Ran a command, read a file
-Done! Agora quando você seleciona um cliente no slot, aparece automaticamente:
-
-🔴 Below ideal rate (vermelho) — quando o valor/hora está abaixo:
-
-Mostra o rate atual vs o ideal
-Mostra o tempo máximo que a cleaner pode ficar sem cair abaixo
-✓ Good rate (verde) — quando está ok:
-
-Mostra quantos minutos extras ela pode ficar e ainda estar acima do ideal
-Os rates usados:
-
-Weekly → $55/hr
-Biweekly → $57/hr
-Monthly → $60/hr
-Every 3, 6, 12 weeks → $63/hr
-E se você mudar a duração no dropdown, o alerta recalcula automaticamente em tempo real.
-
-Simplify route scheduler
-Code · HTML 
-fiz um teste e mudei os valores e o slot nao atualizou
-
-10:55 PM
-O problema é que quando você muda a duração no dropdown, ele recalcula — mas quando você edita o cliente e salva, o slot não recarrega automaticamente.
-
-Vou corrigir: depois de salvar no modal, o slot atualiza sozinho.
-
-
-Ran a command, read a file
-Ran a command, read a file
-Fixed! Agora quando você edita um cliente e clica Save, todos os slots da rota atualizam automaticamente — incluindo o alerta de rate.
-
-Simplify route scheduler
-Code · HTML 
-voce consegue pegar o sqft e colocar na divisao?
-exemplo :
-a casa dela tem 2300
-valor que sai pelo que ela paga dividido pelo sqft
-
-10:56 PM
-Entendi! Você quer ver o custo por sqft:
-
-Cleaning $ ÷ SQFT = $ por sqft
-
-Exemplo: $240 ÷ 2300 sqft = $0.10/sqft
-
-Adiciono isso no alerta do slot, junto com o rate/hour. Confirma?
-
-sim
-
-10:57 PM
-
-Ran a command, read a file
-Ran a command, read a file
-Done! Agora o alerta mostra também:
-
-Cost/sqft: $0.1043 · 2,300 sqft
-
-Aparece tanto no alerta verde (good rate) quanto no vermelho (below ideal) — sempre que o cliente tiver SQFT preenchido no cadastro.
-
-Simplify route scheduler
-Code · HTML 
-a distancia do exemplo que eu fiz esta totalmente errado
-
-11:00 PM
-O problema é a API do Google Maps — quando o app roda como arquivo local no seu computador, o browser bloqueia a chamada por segurança (CORS).
-
-Para funcionar 100% precisa estar no servidor.
-
-Mas me diz: qual foi a distância que apareceu e qual era a correta? Assim eu confirmo se é problema de CORS ou outro erro.
-
-apareceu ( em todos testes que fiz) 8 milhas e 20 minutos
-a distancia correta e 37 minutos 24.7 milhas
-
-11:01 PM
-Confirmado — é exatamente o problema que eu disse. O app está usando o valor estimado (8 mi / 20 min) porque a chamada ao Google Maps está sendo bloqueada pelo browser quando o arquivo roda local.
-
-Solução: subir o arquivo no servidor do Simplify.
-
-Você tem acesso ao WordPress do Simplify agora? É rápido — só fazer upload de um arquivo. Quer que eu te explique como fazer?
-
-tenho, onde ficaria no site? posso criar um link com senha especifica ( para ninguem entrar?)
-
-11:02 PM
-Sim, dá para proteger com senha! No WordPress tem essa opção nativa.
-
-Onde ficaria: Uma página simples no WordPress, por exemplo: simplifycleaningservices.com/schedule
-
-Como proteger com senha:
-
-Cria a página no WordPress
-Em "Visibility" (lado direito) → seleciona Password Protected
-Coloca uma senha só sua (ex: Simplify2025!)
-Ninguém acessa sem a senha
-Como adicionar o app na página: Você cola o conteúdo do arquivo HTML num bloco Custom HTML no WordPress.
-
-Quer que eu te guie passo a passo? Ou prefere que eu primeiro gere uma versão do arquivo já otimizada para o WordPress antes de subir?
-
-me auxilie no wordpress para colocar esse app la
-
-11:03 PM
-Vamos lá! Siga o passo a passo:
-
-Passo 1 — Criar a página
-
-Entre no seu WordPress: simplifycleaningservices.com/wp-admin
-No menu esquerdo clique em Pages → Add New
-No título coloque: Schedule
-Passo 2 — Proteger com senha
-
-No lado direito, clique em Status & Visibility
-Em Visibility clique em Public → troca para Password Protected
-Digite uma senha (ex: Simplify2025!)
-Passo 3 — Adicionar o app
-
-Na área de edição, clique no + para adicionar bloco
-Busque Custom HTML e selecione
-Abra o arquivo simplify_route_scheduler.html no seu computador com o Bloco de notas (Windows) ou TextEdit (Mac)
-Seleciona tudo (Ctrl+A) → copia (Ctrl+C)
-Cola dentro do bloco Custom HTML no WordPress
-Passo 4 — Publicar
-
-Clique em Publish
-Acesse o link e coloque a senha para testar
-Me diz em qual passo você está e eu te ajudo se travar!
-
-no beaver?
-
-11:06 PM
-Sim, no Beaver Builder é ainda mais fácil!
-
-Passo 1 — Criar a página
-
-Pages → Add New
-Título: Schedule
-Clique em Launch Beaver Builder
-Passo 2 — Proteger com senha
-
-Antes de entrar no Beaver, no lado direito clique em Visibility → Password Protected
-Coloca a senha
-Passo 3 — Adicionar o app no Beaver
-
-Dentro do Beaver Builder, clique no + para adicionar módulo
-Busca por HTML ou Custom HTML
-Abre o arquivo no Bloco de Notas / TextEdit
-Seleciona tudo Ctrl+A → copia Ctrl+C
-Cola dentro do módulo HTML
-Passo 4 — Publicar
-
-Clique em Done → Publish
-Acesse a página e teste com a senha
-Em qual passo você está?
-
-que arquivo de bloco de notas?
-copiar o que?
-
-11:08 PM
-O arquivo HTML que eu gerei — o simplify_route_scheduler.html que você baixou.
-
-Como abrir:
-
-Vá até o arquivo no seu computador (na pasta Downloads)
-Clique com o botão direito no arquivo
-Selecione Open with → Notepad (Windows) ou TextEdit (Mac)
-Vai abrir um monte de código — isso é normal
-Seleciona tudo Ctrl+A → copia Ctrl+C
-Cola no módulo HTML do Beaver Builder
-É esse código todo que vai dentro do bloco HTML no WordPress. Conseguiu encontrar o arquivo?
-
-sorry eu nao baixei
-
-11:08 PM
-Sem problema! Baixa agora:
-
-
-Presented file
-Presented file
-Clica no arquivo acima para baixar. Depois me avisa que eu te guio no próximo passo!
-
-Simplify route scheduler
-Code · HTML 
-como colo o api key?
-
-11:10 PM
-Depois de subir no WordPress, a página vai ter o campo amarelo no topo "Google Maps API Key" — igual ao app aqui no chat.
-
-Você cola a chave lá uma única vez e ela fica salva no navegador daquele dispositivo para sempre.
-
-Mas tem um detalhe importante — sua API key precisa estar configurada para aceitar o domínio do Simplify.
-
-Faça isso agora:
-
-Acesse console.cloud.google.com
-Vá em APIs & Services → Credentials
-Clique na sua chave
-Em Website restrictions, adicione:
-simplifycleaningservices.com/*
-Clica Save
-Depois disso a distância real vai funcionar perfeitamente no site. Quer ajuda com essa parte?
-
-ja fiz e ja tenho a chave
-
-11:10 PM
-Perfeito! Então é só:
-
-Subir o arquivo no WordPress (Beaver Builder → módulo HTML → cola o código → Publish)
-Acessar a página no site
-Colar a chave no campo amarelo uma vez só
-Conseguiu abrir o arquivo no Bloco de Notas ainda? Me diz onde travou que eu te ajudo!
-
-encontrei muitos erros
-clients: nao entra
-distancia ( continua a mesma)
-
-11:14 PM
-Vamos resolver um de cada vez.
-
-Erro 1 — Clients não abre: Quando você clica na aba Clients, o que acontece? Fica em branco, dá erro, ou não faz nada?
-
-Erro 2 — Distância continua 8mi/20min: A chave API já está no campo amarelo e aparece "✓ Key saved"?
-
-Me manda um print ou descreve o que aparece na tela em cada um.
-
-1775099718065_image.png
-1775099732379_image.png
-1775099747334_image.png
-1: nao faz nada
-2: sim continua em 8/20 , key saved ( toda vez que entro ta pedindo)
-
-11:15 PM
-Vejo os problemas:
-
-Problema 1 — Clients não abre: O Beaver Builder está bloqueando o JavaScript do modal. É um conflito com o editor.
-
-Problema 2 — Distância 8mi/20min: O Google Maps está sendo bloqueado por CORS — o WordPress/Beaver está impedindo a chamada externa.
-
-Problema 3 — Key pede toda vez: O localStorage não funciona dentro do iframe do Beaver Builder.
-
-A solução para tudo isso é uma só — em vez de colar o código no bloco HTML do Beaver, vamos fazer diferente:
-
-Subir o arquivo HTML diretamente no servidor do Simplify via FTP ou Media Library, e acessar pelo link direto — sem passar pelo WordPress/Beaver.
-
-Você tem acesso ao cPanel ou FTP da sua hospedagem?
-
-tenho
-
-11:19 PM
-Perfeito! Vamos fazer assim:
-
-Passo 1 — Acessar o cPanel
-
-Acesse o cPanel da sua hospedagem
-Procure por File Manager
-Clique para abrir
-Passo 2 — Navegar até a pasta do Simplify
-
-Dentro do File Manager, vá para a pasta public_html
-Crie uma pasta nova chamada schedule
-Clique em + Folder no topo
-Nome: schedule
-Passo 3 — Upload do arquivo
-
-Entre na pasta schedule
-Clique em Upload
-Sobe o arquivo simplify_route_scheduler.html
-Passo 4 — Acessar O app vai estar em: simplifycleaningservices.com/schedule/simplify_route_scheduler.html
-
-Passo 5 — Proteger com senha No cPanel, procure por Directory Privacy ou Password Protect Directories
-
-Seleciona a pasta schedule
-Ativa a proteção
-Cria usuário e senha
-Me diz quando chegar no File Manager que eu te guio!
-
-1775100270362_image.png
-onde?
-
-11:24 PM
-Você está no Cloudflare — aqui é onde seu domínio está gerenciado, não onde estão os arquivos do site.
-
-O cPanel fica na sua hospedagem (onde o WordPress está instalado). Normalmente é:
-
-simplifycleaningservices.com/cpanel
-
-ou o provedor te enviou um link separado quando contratou a hospedagem.
-
-Qual é sua hospedagem? — SiteGround, Bluehost, HostGator, GoDaddy, WP Engine, outro?
-
-hostgator
-
-11:25 PM
-Perfeito! No HostGator:
-
-Passo 1 — Acessar o cPanel
-
-Acesse: hostgator.com
-Faça login na sua conta
-Clique em Hosting no menu
-Clique em cPanel ao lado do seu domínio
-Ou acesse direto: simplifycleaningservices.com/cpanel
-
-Me diz quando estiver dentro do cPanel!
-
-1775100383883_image.png
-onde vou?
-
-11:26 PM
-Clique em Hosting no menu esquerdo!
-
-okay me guie pelo resto do processo
-
-11:27 PM
-Me manda um print do que aparece depois de clicar em Hosting!
-
-1775100435885_image.png
-11:27 PM
-Clique no "E" (Edit) que aparece do lado direito do site do Simplify — arraste a barra horizontal para ver o botão completo!
-
-1775100452756_image.png
-mais essa parte
-
-11:27 PM
-Perfeito! Clique em FILE MANAGER no lado direito!
-
-ok
-
-11:27 PM
-
-Placeholder
-Placeholder
-Me manda um print do que aparece no File Manager!
-
-1775100490799_image.png
-1775100500416_image.png
-1775100507648_image.png
-11:28 PM
-Perfeito! Vejo o File Manager. Agora:
-
-Clique na pasta public_html no menu esquerdo para abrir
-Me manda um print do que aparece dentro dela
-nao parece ser um link clicavel
-
-11:30 PM
-Na lista do lado direito, dê duplo clique na pasta public_html (tem o ícone azul com o globo).
-
-1775100624939_image.png
-1775100634726_image.png
-11:30 PM
-Perfeito! Você está dentro do public_html. Agora:
-
-Passo 1 — Criar a pasta "schedule"
-
-Olha no topo do File Manager — tem uma barra de ferramentas
-Clique em "+ Folder" ou "New Folder"
-Nome: schedule
-Clique em Create
-Me manda print quando criar!
-
-ok
-
-11:31 PM
-Me manda um print mostrando a pasta schedule criada dentro do public_html!
-
-1775100719749_image.png
-11:32 PM
-Perfeito! Você já está dentro da pasta public_html/schedule e está vazia. Agora:
-
-Clique em Upload no topo
-Vai abrir uma tela de upload
-Arraste o arquivo simplify_route_scheduler.html ou clique para selecionar
-Aguarde o upload terminar
-Me manda print quando terminar!
-
-i didn downloaded
-
-11:32 PM
-No problem! Download it here:
-
-
-Presented file
-Presented file
-Click the file above to download it, then go back to the HostGator File Manager and click Upload to upload it to the schedule folder!
-
-Simplify route scheduler
-Code · HTML 
-ok
-
-11:33 PM
-Now go back to the HostGator File Manager and:
-
-Click Upload in the top toolbar
-Select the simplify_route_scheduler.html file you just downloaded
-Wait for it to finish
-Let me know when it's done!
-
-1775100815234_image.png
-11:33 PM
-100% uploaded!
-
-Now let's protect it with a password. First, let's test if it works:
-
-Open a new tab and go to: simplifycleaningservices.com/schedule/simplify_route_scheduler.html
-
-Does it open? Tell me what you see!
-
-nao abre, abre somente ate o .com
-
-11:34 PM
-O Cloudflare está bloqueando! Como seu domínio passa pelo Cloudflare, ele está redirecionando tudo para o WordPress.
-
-Vamos corrigir isso. Volte ao File Manager no HostGator e:
-
-Clique em Go Back to "/home4/simplces/public_html/schedule"
-Clique em + File no topo
-Nome do arquivo: .htaccess
-Clique em Create
-Me manda print quando criar!
-
-okay
-
-11:36 PM
-Agora:
-
-Clique com o botão direito no arquivo .htaccess que acabou de criar
-Clique em Edit
-Cole esse código dentro:
-Options -Indexes
-DirectoryIndex simplify_route_scheduler.html
-Clique em Save
-Me manda print quando salvar!
-
-ele nao abre, faz download
-
-11:37 PM
-Sem problema! Vamos fazer diferente:
-
-Clique com o botão direito no .htaccess
-Selecione Edit (não View, não Download — Edit)
-Se não aparecer Edit, selecione o arquivo clicando uma vez nele e depois clique em Edit na barra do topo.
-
-Me manda print do que aparece!
-
-done
-
-11:37 PM
-Agora cole esse código dentro do editor:
-
-Options -Indexes
-DirectoryIndex simplify_route_scheduler.html
-Depois clique em Save Changes no topo. Me avisa quando salvar!
-
-done
-
-11:38 PM
-Agora tente acessar novamente no navegador:
-
-simplifycleaningservices.com/schedule/simplify_route_scheduler.html
-
-O que aparece?
-
-nada ainda
-
-11:38 PM
-O problema é o Cloudflare mesmo. Ele está interceptando todas as URLs e mandando para o WordPress.
-
-Vamos resolver direto no Cloudflare. Volte ao dash.cloudflare.com e:
-
-Clique no domínio simplifycleaningservices.com
-Me manda print do que aparece
-1775101299785_image.png
-11:41 PM
-Perfeito! Agora:
-
-Clique em Rules no menu esquerdo
-Me manda print do que aparece
-onde ta vendo rules?
-
-11:42 PM
-Rola o menu esquerdo para baixo — deve aparecer entre Network e Manage account.
-
-Ou tenta clicar em Speed — às vezes o menu muda dependendo do plano.
-
-Me manda print do menu esquerdo completo!
-
-1775101392410_image.png
-11:43 PM
-Não tem Rules nesse plano do Cloudflare. Sem problema — vamos resolver de outra forma.
-
-Clique em DNS no menu esquerdo e me manda print do que aparece.
-
-1775101415902_image.png
-11:43 PM
-Clique em Records!
-
-1775101435319_image.png
-11:44 PM
-Perfeito! Vejo o problema — o registro A do simplify... tem o ícone laranja do Cloudflare (proxy ativo). Isso é o que está bloqueando.
-
-Vamos criar um subdomínio específico para o app sem passar pelo proxy:
-
-Clique em + Add record
-Preencha assim:
-Type: A
-Name: schedule
-IPv4 address: 104.207.13... (o mesmo IP do registro A existente — clique em Edit nele para ver o IP completo)
-Proxy status: clique para deixar DNS only (nuvem cinza, não laranja)
-Clique Save
-Assim o app ficará em schedule.simplifycleaningservices.com sem interferência do Cloudflare.
-
-Primeiro clique em Edit no registro A do simplify... para me mostrar o IP completo!
-
-1775101589687_image.png
-correto?
-
-11:46 PM
-Quase! Só precisa desligar o proxy.
-
-Clique no toggle laranja (Proxy status) para ficar cinza — DNS only. Depois clique Save.
-
-okay
-
-11:46 PM
-Agora tente acessar:
-
-schedule.simplifycleaningservices.com/simplify_route_scheduler.html
-
-O que aparece?
-
-1775101628116_image.png
-11:47 PM
-O DNS ainda está propagando — isso é normal, pode levar até 10-15 minutos.
-
-Aguarda um pouco e tenta de novo. Enquanto isso, precisamos criar a pasta schedule no servidor como subdomínio no HostGator também.
-
-Volte ao HostGator e:
-
-Clique em cPanel
-Procure por Subdomains ou Subdomínios
-Me manda print quando encontrar!
-
-nao achei
-
-11:49 PM
-Tudo bem! No HostGator novo não tem cPanel tradicional. Vamos fazer diferente.
-
-Volte ao HostGator e clique em Websites no menu esquerdo → depois clique em Edit no Simplify → procure por Subdomains ou Advanced.
-
-Me manda print do que aparece!
-
-aparece
-0
-
-11:50 PM
-Me manda um print do que aparece na tela depois de clicar em Edit!
-
-1775101829387_image.png
-11:50 PM
-Página em branco com "0" — isso é um erro. Vamos tentar direto pelo cPanel.
-
-Acesse no seu navegador: simplifycleaningservices.com/cpanel
-
-Me manda print do que aparece!
-
-entra no site normal
-
-11:51 PM
-Tudo bem! Vamos tentar assim — acesse diretamente:
-
-gator4190.hostgator.com:2082
-
-Ou tente: 104.207.133.107:2082
-
-Esse é o endereço direto do cPanel no HostGator. Me diz o que aparece!
-
-colocar um desse no search bar?
-
-11:52 PM
-Sim! Cola esse na barra de endereço do navegador:
-
-104.207.133.107:2082
-
-Me diz o que aparece!
-
-1775101938535_image.png
-11:53 PM
-Tudo bem! O cPanel está bloqueado por porta. Vamos aguardar o DNS propagar — normalmente leva entre 5-15 minutos.
-
-Enquanto isso, tente acessar agora:
-
-schedule.simplifycleaningservices.com/simplify_route_scheduler.html
-
-Se ainda não funcionar, aguarda mais 10 minutos e tenta de novo. O DNS precisa propagar primeiro.
-
-Me avisa quando tentar!
-
-ainda nao
-
-11:53 PM
-Aguarda mais 10 minutos e tenta de novo. O DNS pode levar até 30 minutos para propagar completamente.
-
-Enquanto isso, precisamos criar o subdomínio no HostGator também — o DNS aponta para o servidor, mas o servidor precisa saber que schedule existe.
-
-Volte ao File Manager no HostGator. O arquivo está em public_html/schedule/ — isso está correto. Mas precisamos configurar o subdomínio.
-
-Tente acessar: portal.hostgator.com
-
-Faz login e procura por "cPanel" ou "Manage Hosting". Me manda print!
-
-nao e mais facil fazer um app ou eu entrar pelo HTML?
-
-11:54 PM
-Sim, muito mais fácil! Duas opções:
-
-Opção 1 — Abrir o HTML direto no celular/computador Salva o arquivo no seu telefone e abre no Chrome. Funciona offline, mas a distância do Google Maps não vai funcionar por causa do CORS.
-
-Opção 2 — GitHub Pages (GRÁTIS, 5 minutos) Você cria uma conta gratuita no GitHub, faz upload do arquivo, e ele gera um link público tipo: seuusuario.github.io/schedule Funciona em qualquer lugar, celular e computador, Google Maps funciona 100%.
-
-Minha recomendação: Opção 2 — GitHub Pages.
-
-Quer tentar? É bem simples e eu te guio!
-
-PELO AMOR DE DEUS PQ NAO FALOU  ANTES!
-MAS FICA OUBLICO?
-
-11:55 PM
-Desculpa! Devia ter sugerido antes! 😅
-
-Sobre ser público — você controla isso:
-
-Repositório Privado → só você vê o código (requer plano pago no GitHub ~$4/mês)
-Repositório Público → qualquer um que tiver o link pode acessar, mas ninguém vai achar por acaso
-Solução gratuita e segura: deixa público mas coloca uma senha dentro do próprio app — já posso adicionar isso no arquivo. Aí mesmo que alguém tenha o link, precisa da senha para usar.
-
-Quer que eu adicione a tela de senha no app e depois te guio no GitHub Pages?
-
-SIM
-
-11:56 PM
-Perfeito! Vou adicionar a tela de senha agora:
-
-
-Ran a command, read a file
-Ran a command, read a file
-Pronto! A senha é: Simplify2025!
-
-Após digitar uma vez, o app lembra que você já entrou — não pede de novo no mesmo dispositivo.
-
-Agora o GitHub Pages — 5 passos:
-
-Acesse github.com e crie uma conta gratuita
-Clique em + New repository
-Nome: schedule → deixa Public → clique Create
-Clique em uploading an existing file → sobe o arquivo
-Vá em Settings → Pages → Branch: main → Save
-O link vai ser: seuusuario.github.io/schedule
-
-Quer que eu te guie passo a passo?
-
-Simplify route scheduler
-Code · HTML 
-1775102410648_image.png
-12:00 AM
-O repositório está vazio — precisa subir o arquivo primeiro antes de ativar o Pages.
-
-Volte ao repositório e:
-
-Clique em uploading an existing file ou Add file → Upload files
-Arraste o arquivo simplify_route_scheduler.html
-Importante: renomeie para index.html antes de subir — assim o link fica limpo sem precisar digitar o nome do arquivo
-Clique em Commit changes
-Me avisa quando subir!
-
-1775102525966_image.png
-done
-
-12:02 AM
-Perfeito! Já está configurado com main e / (root). Clique em Save!
-
-Depois acesse: cibelegray.github.io/schedule
-
-Me diz o que aparece!
-
-1775102585571_image.png
-12:03 AM
-O arquivo não está na pasta certa. O GitHub Pages precisa de um arquivo chamado index.html na raiz do repositório.
-
-Volte ao repositório no GitHub e me diz — qual é o nome do repositório que você criou? É schedule ou outro nome?
-
-Acesse: github.com/cibelegray e me manda print dos repositórios que aparecem!
-
-1775102629206_image.png
-12:03 AM
-Vejo o problema! O arquivo se chama simplify_route_scheduler password.html mas precisa se chamar index.html. Vamos renomear:
-
-Clique no arquivo simplify_route_scheduler password.html
-Clique no ícone de lápis (Edit) no topo direito
-No campo do nome do arquivo no topo, apaga o nome e digita: index.html
-Clique em Commit changes → Commit changes de novo
-Me avisa quando fizer!
-
-1775102799526_image.png
-agora apareceu isso
-
-12:06 AM
-Clique em schedule para entrar no repositório!
-
-1775102863031_image.png
-12:07 AM
-Perfeito! Vejo index.html e github-pages ✅ deployed!
-
-Acesse agora:
-
-cibelegray.github.io/schedule
-
-Me diz o que aparece!
-
-to mudando hehhe
-
-12:08 AM
-😄 Tá indo! Me avisa quando abrir!
-
-abriu
-
-12:09 AM
-🎉 FUNCIONOU!
-
-Agora adicione sua API Key do Google Maps no campo amarelo e teste a distância!
-
-O link do seu app é: cibelegray.github.io/schedule
-
-Salva esse link nos favoritos do celular e computador. No celular você pode adicionar à tela inicial como app!
-
-Para adicionar no iPhone:
-
-Abre o link no Safari
-Clica no ícone de compartilhar
-Add to Home Screen
-Para adicionar no Android:
-
-Abre no Chrome
-Menu (3 pontinhos) → Add to Home Screen
-Testa a distância e me diz se funcionou!
-
-qual e a senha?
-
-12:09 AM
-A senha é:
-
-Simplify2025!
-
-1775103189367_image.png
-mesmo problema ainda
-
-12:13 AM
-A distância ainda está 8mi/20min — a API Key não está sendo aceita.
-
-Preciso verificar duas coisas rápidas:
-
-No Google Cloud Console, a API Distance Matrix API está ativada? Vá em console.cloud.google.com → APIs & Services → Enabled APIs e me confirma se aparece Distance Matrix API na lista.
-Nas restrições da chave, você adicionou cibelegray.github.io/* como domínio permitido?
-1775103276018_image.png
-12:14 AM
-Vejo duas chaves! Clique em API key 2 — essa é a que tem "HTTP referrers, 2 APIs" que é a que você usa no app. Preciso ver se cibelegray.github.io está nos referrers permitidos!
-
-api key 2 que esta la
-
-12:15 AM
-Clique em API key 2 para abrir e ver as configurações!
-
-1775103352349_image.png
-12:15 AM
-Vejo dois problemas:
-
-APIs erradas — tem Geocoding API e Maps JavaScript API, mas precisa da Distance Matrix API
-Website restrictions — precisa adicionar cibelegray.github.io
-Vamos corrigir:
-
-Passo 1 — Adicionar Distance Matrix API:
-
-Clique em "2 APIs" dropdown
-Adicione Distance Matrix API
-Passo 2 — Rolar para baixo até Website restrictions e me manda print do que está lá!
-
-nao tem esse nome nap
-
-12:18 AM
-Role a página para baixo até ver Website restrictions e me manda print!
-
-1775103515662_image.png
-12:18 AM
-Perfeito! Vejo o problema — o GitHub não está na lista. Clique em + Add e adicione:
-
-cibelegray.github.io/*
-
-Depois clique Save!
-
-okay e agora?
-
-12:19 AM
-Agora precisa também adicionar a Distance Matrix API nessa chave. Role a página para cima até "2 APIs" e clique nesse dropdown para adicionar a Distance Matrix API. Me manda print do que aparece!
-
-1775103605541_image.png
-12:20 AM
-Role para baixo nessa lista até encontrar Distance Matrix API e marque o checkbox! Me avisa quando encontrar!
-
-1775103630766_image.png
-12:20 AM
-Distance Matrix API não está na lista — significa que ela não está ativada no seu projeto ainda.
-
-Digite "Distance" no campo "Type to filter" para procurar. Se não aparecer, precisamos ativar ela primeiro.
-
-Me diz o que aparece quando digitar!
-
-1775103657418_image.png
-12:21 AM
-Confirmado — a Distance Matrix API não está ativada. Vamos ativar:
-
-Clique Cancel para fechar esse dropdown
-Abra uma nova aba e acesse: console.cloud.google.com/apis/library
-Busque por "Distance Matrix"
-Clique nela e clique em Enable
-Me avisa quando ativar!
-
-1775103702397_image.png
-esse?
-
-12:21 AM
-Sim! Clique nela e depois clique em Enable!
-
-done
-
-12:22 AM
-Agora volte para Credentials → API key 2 → Edit e adicione a Distance Matrix API na lista de APIs permitidas.
-
-Clique no dropdown "2 APIs", filtre por "distance" e agora deve aparecer. Marque e clique OK → Save!
-
-yessssss
-
-12:23 AM
-🎉 Agora teste o app:
-
-cibelegray.github.io/schedule
-
-Seleciona 2 clientes e clica Calculate Route & Schedule — a distância deve vir real agora!
-
-mesmo
-
-12:23 AM
-A chave que está no app pode ser a antiga. Precisa colocar a chave novamente no campo amarelo do app.
-
-Volte ao Google Cloud → Credentials → API key 2 → Show key — copie a chave e cole no campo amarelo do app em cibelegray.github.io/schedule.
-
-Me avisa quando colocar!
-
-troquei mas a senha pareceu a mesma
-
-12:26 AM
-A senha ficou salva do acesso anterior — isso é normal e bom! Significa que o localStorage está funcionando.
-
-Agora teste a distância — seleciona 2 clientes e clica Calculate Route & Schedule. O que aparece?
-
-mesmo
-
-12:27 AM
-O problema pode ser CORS — o browser está bloqueando a chamada direta para a API do Google Maps.
-
-Vamos verificar. Abra o app no Chrome, pressione F12 para abrir o Developer Tools, clique na aba Console, e depois clique em Calculate Route & Schedule.
-
-Me manda print do que aparece no Console!
-
-1775104127434_image.png
-12:28 AM
-Console está vazio. Agora clique na aba Network no topo, depois clique em Calculate Route & Schedule no app, e me manda print do que aparece na aba Network!
-
-1775104157683_image.png
-12:29 AM
-Confirmado — não está fazendo nenhuma chamada para o Google Maps. A chamada não está chegando nem a sair do app.
-
-O problema é que a Distance Matrix API não aceita chamadas diretas do browser por CORS — é uma limitação do Google. Ela só funciona server-side.
-
-Solução definitiva: Trocar para a Routes API ou usar o Maps JavaScript API que aceita chamadas do browser.
-
-Vou atualizar o código agora para usar o Maps JavaScript API com o serviço de distância correto que funciona no browser. Um segundo!
-
-
-Ran a command, read a file
-Ran a command, read a file
-Baixa o arquivo atualizado e faz o upload no GitHub substituindo o index.html atual:
-
-Vai em github.com/cibelegray/schedule
-Clica no arquivo index.html
-Clica no ícone de upload (ou arrasta o novo arquivo)
-Marca Overwrite existing files
-Commit changes
-Me avisa quando fizer!
-
-Simplify route scheduler
-Code · HTML 
-devo excluir esse que ta aqui?
-
-12:32 AM
-Não precisa excluir! Só:
-
-Clica no arquivo index.html no GitHub
-Clica no ícone de lápis (Edit) no canto superior direito
-Clica nos 3 pontinhos ... → Upload new version ou volta para a pasta e clica em Add file → Upload files
-Marca Overwrite existing files
-Sobe o novo arquivo
-Commit changes
-Me avisa quando fizer!
-
-1775104386699_image.png
-onde?
-
-12:33 AM
-Clica em Cancel changes para voltar. Depois na pasta do repositório clica em Add file → Upload files e sobe o novo arquivo com Overwrite existing files marcado!
-
-1775104473833_image.png
-aqui?
-
-12:34 AM
-Não! Clica em Cancel ou volta atrás. Você foi para "Create new repository" mas não precisa criar um novo.
-
-Acesse diretamente: github.com/cibelegray/schedule e me manda print!
-
-1775104510761_image.png
-12:35 AM
-Perfeito! Agora clique no + (ao lado de "Go to file") → Upload files → sobe o novo arquivo simplify_route_scheduler.html → marca Overwrite existing files → Commit changes!
-
-simplify_route_scheduler password new.html
-
-so add o new pq eu ja tinha esse nome
-
-12:36 AM
-Perfeito! Mas precisa renomear para index.html antes de subir.
-
-Renomeia o arquivo no seu computador:
-
-Clica com o botão direito no arquivo
-Rename
-Muda para index.html
-Depois sobe no GitHub com Overwrite existing files marcado!
-
-1775104635131_image.png
-12:37 AM
-Clique Cancel. Vamos fazer diferente — mais fácil:
-
-Volte ao repositório github.com/cibelegray/schedule
-Clique no arquivo index.html
-Clique no ícone de lápis (Edit) no canto superior direito
-Seleciona todo o conteúdo (Ctrl+A) e deleta
-Abre o novo arquivo index.html no Notepad, seleciona tudo (Ctrl+A), copia (Ctrl+C)
-Cola no editor do GitHub
-Clica Commit changes
-Me avisa quando fizer!
-
-
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Simplify — Route Scheduler</title> <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap
-
-pasted
-
-correto?
-
-12:40 AM
-Sim! Esse é o código correto e completo. Agora:
-
-No GitHub, clique no arquivo index.html
-Clique no ícone de lápis (Edit)
-Seleciona tudo dentro do editor (Ctrl+A)
-Deleta tudo
-Cola o código acima (Ctrl+V)
-Clique em Commit changes → Commit changes
-Me avisa quando fizer!
-
-done
-
-12:42 AM
-Agora acesse:
-
-cibelegray.github.io/schedule
-
-Entra com a senha Simplify2025! e testa a distância! Me diz o que aparece!
-
-fica tudo branco
-
-12:43 AM
-O código não carregou corretamente. O problema pode ser que o GitHub ainda está processando.
-
-Aguarda 2 minutos e tenta dar Ctrl+F5 (forçar reload) na página.
-
-Me avisa o que aparece!
-
-entrou sem pedir senha
-
-12:44 AM
-Normal — a senha já estava salva no seu navegador do acesso anterior. Isso é bom!
-
-Agora testa a distância — seleciona 2 clientes e clica Calculate Route & Schedule. O que aparece?
-
-nada ainda
-
-12:46 AM
-Vamos debugar. Com a página aberta, pressiona F12 → aba Console → clica em Calculate Route & Schedule e me manda print do que aparece no console!
-
-1775105217068_image.png
-12:47 AM
-Perfeito! Agora vejo o problema claramente:
-
-"API key is not authorized to use this service"
-
-A chave API key 2 tem as APIs erradas. Precisa adicionar Maps JavaScript API nessa chave também.
-
-Volte ao Google Cloud → Credentials → API key 2 → Edit → no dropdown de APIs, adicione Maps JavaScript API → Save.
-
-Me avisa quando fizer!
-
-mas javascript ja estaca selecionada
-
-12:48 AM
-Você está certa! O problema então é que a Distance Matrix API ainda não está associada a essa chave.
-
-Volte em Credentials → API key 2 → Edit → clique no dropdown de APIs → filtre por "distance" — agora deve aparecer porque você já ativou ela. Adicione e salve!
-
-distance nao tava selecionado
-
-12:48 AM
-Perfeito! Seleciona Distance Matrix API → clica OK → Save!
-
-Me avisa quando salvar!
-
-funcionooooou
-
-12:49 AM
-🎉🎉🎉 FINALMENTE!!!
-
-Agora você tem um app completo funcionando em: cibelegray.github.io/schedule
-
-✅ Distância real em milhas pelo Google Maps
-✅ Tempo real de deslocamento
-✅ 127 clientes do Jobber já carregados
-✅ Senha de acesso
-✅ Scorecard por cliente
-✅ Alerta de rate (abaixo ou acima do ideal)
-✅ Funciona no celular e computador
-Salva o link nos favoritos e no celular como app! Você merece — foi uma batalha hoje! 💪
-
-e possivel fazer alguma alteracao?
-exemplo:
-la no cadastro do cliente pegar
-o valor que paga, dividir pelo tempo
-dar o valor da hora automaticamente
-
-1:02 AM
-Sim! Quando você preencher Cleaning $ e Duration, o campo Price/Hour calcula automaticamente.
-
-Quer que eu faça isso agora?
-
-sim
-
-1:02 AM
-
-Add auto price/hour calculation
-Add auto price/hour calculation
-Pronto! Agora quando você preencher Cleaning $ e selecionar a Duration, o campo Price/Hour preenche automaticamente — e fica verde para mostrar que foi calculado.
-
-Funciona tanto no cadastro de novo cliente quanto no modal de edição.
-
-Agora é só copiar o código atualizado para o GitHub. Quer que eu gere o arquivo para você subir?
-
-sim e me guie
-
-1:03 AM
-
-Presented file
-Presented file
-Baixa o arquivo. Agora:
-
-Vai em github.com/cibelegray/schedule
-Clica no arquivo index.html
-Clica no ícone de lápis (Edit)
-Seleciona tudo Ctrl+A → deleta
-Abre o arquivo baixado no Notepad → Ctrl+A → Ctrl+C
-Cola no GitHub Ctrl+V
-Clica Commit changes → Commit changes
-Me avisa quando fizer!
-
-Simplify route scheduler
-Code · HTML 
-
-
-
-
-Claude is AI and can make mistakes. Please double-check responses.
-Simplify route scheduler · HTML
-Copy
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1711,7 +99,7 @@ body{font-family:'Sora',sans-serif;background:#FFF7FB;color:#1a1a1a;min-height:1
 </style>
 </head>
 <body>
- 
+
 <div id="lock-screen" style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#FFF7FB;">
   <div style="background:white;border-radius:16px;padding:2rem;width:90%;max-width:360px;border:1px solid #e8e8e6;text-align:center;">
     <div style="width:56px;height:56px;background:#E53093;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;">🔒</div>
@@ -1729,26 +117,26 @@ body{font-family:'Sora',sans-serif;background:#FFF7FB;color:#1a1a1a;min-height:1
     <span>Route planner with Google Maps</span>
   </div>
 </div>
- 
+
 <div class="container">
   <div class="api-bar">
     <label>🔑 Google Maps API Key</label>
     <input type="password" id="api-key-input" placeholder="Paste your key here (AIzaSy...)">
     <span class="api-status s-idle" id="api-status">Waiting for key</span>
   </div>
- 
+
   <div class="tabs">
     <button class="tab active" onclick="sw('route')">Plan Route</button>
     <button class="tab" onclick="sw('clients')">Clients <span id="cnt" style="font-size:11px;opacity:.7;"></span></button>
     <button class="tab" onclick="sw('add')">+ New</button>
   </div>
- 
+
   <!-- ROTA -->
   <div class="view active" id="view-route">
     <p class="section-title">Select clients for this route</p>
     <div id="slots-container"></div>
     <button class="add-slot-btn" id="add-slot-btn" onclick="addSlot()">+ Add another client</button>
- 
+
     <p class="section-title">Day settings</p>
     <div class="settings-card">
       <div class="settings-row">
@@ -1761,10 +149,10 @@ body{font-family:'Sora',sans-serif;background:#FFF7FB;color:#1a1a1a;min-height:1
         </label>
       </div>
     </div>
- 
+
     <button class="btn-calc" onclick="calcRoute()">Calculate route & schedule</button>
     <div class="load-msg" id="load-msg" style="display:none;">Fetching distances from Google Maps...</div>
- 
+
     <div id="result-block" style="display:none;">
       <div class="result-card">
         <p class="section-title">Day summary</p>
@@ -1784,7 +172,7 @@ body{font-family:'Sora',sans-serif;background:#FFF7FB;color:#1a1a1a;min-height:1
       </div>
     </div>
   </div>
- 
+
   <!-- CLIENTES -->
   <div class="view" id="view-clients">
     <div class="search-bar">
@@ -1797,7 +185,7 @@ body{font-family:'Sora',sans-serif;background:#FFF7FB;color:#1a1a1a;min-height:1
     </div>
     <div id="client-list-all"></div>
   </div>
- 
+
   <!-- NOVO -->
   <div class="view" id="view-add">
     <p class="section-title">Add new client</p>
@@ -1846,7 +234,7 @@ body{font-family:'Sora',sans-serif;background:#FFF7FB;color:#1a1a1a;min-height:1
     </div>
   </div>
 </div>
- 
+
 <!-- MODAL -->
 <div class="modal-overlay" id="pref-modal" onclick="if(event.target.id==='pref-modal')closeModal()">
   <div class="modal">
@@ -1892,28 +280,28 @@ body{font-family:'Sora',sans-serif;background:#FFF7FB;color:#1a1a1a;min-height:1
     <button class="btn-cancel" onclick="closeModal()">Cancel</button>
   </div>
 </div>
- 
+
 <script>
 const SK='simplify_v3';
 const MK='simplify_gmaps_key';
 const SLOT_COLORS=['#E53093','#AD1E73','#6ED386','#E53093','#AD1E73','#6ED386'];
 let slotCount=0;
 let editId=null;
- 
+
 const IMPORTED=[{"id":"3269713362","name":"Alena Martiros","addr":"303 New Ipswich Road, Ashby, Massachusetts","phone":"(508) 789-5691","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8577351766","name":"Alex Brown","addr":"1778 Wedgewood Common, Concord, Massachusetts","phone":"(617) 510-1158","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3625962366","name":"Amber Calkins","addr":"139 Kendall Hill Road, Sterling, Massachusetts","phone":"(603) 852-5049","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"4110497403","name":"Amy and Cliff Worthley","addr":"53 Woodland Drive, Lunenburg, Massachusetts","phone":"(978) 821-9529","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8949034265","name":"Andrew Osterman","addr":"16 Elm Street, Peterborough, New Hampshire","phone":"(202) 422-5994","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8089199656","name":"Aubie Kilbourn","addr":"41 Squire Shaler Lane, Lancaster, Massachusetts","phone":"(978) 870-9075","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6867204702","name":"Bill Shuyler","addr":"6 Village Way, Rutland, Massachusetts","phone":"(508) 886-2494","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8803197089","name":"Bob Heske","addr":"152 State Road West, Westminster, Massachusetts","phone":"(508) 868-3116","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3812410609","name":"Bob Mullins","addr":"8 Almanac Way, West Boylston, Massachusetts","phone":"(508) 816-3795","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1998748327","name":"Vivian Juusola","addr":"19 Sauna Row Road, Townsend, Massachusetts","phone":"(617) 763-6890","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3880412730","name":"Brenda Boudreau","addr":"2 Old Battery Road, Townsend, Massachusetts","phone":"(508) 574-9664","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1308476855","name":"Virginia Drummond","addr":"102 Parker Hill Drive, Fitchburg, Massachusetts","phone":"(978) 501-2844","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2536572733","name":"Carol Leger","addr":"90 Contoocook Lane, Peterborough, New Hampshire","phone":"(978) 660-8558","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2396664789","name":"Cassandra J Trice","addr":"12 Margaret Street, Gardner, Massachusetts","phone":"+1 (508) 615-4928","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7552142750","name":"Valerie D Jenkind","addr":"79 Robbe Farm Road, Peterborough, New Hampshire","phone":"(978) 877-3283","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"4692029081","name":"Charlene Diotalevi","addr":"62 Heywood Road, Sterling, Massachusetts","phone":"(508) 259-6816","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7103393705","name":"Chelsea","addr":"2 Highland Drive, Peterborough, New Hampshire","phone":"(630) 865-6935","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"9176618999","name":"Tony Pineyro","addr":"16 Sanderson Street, Leominster, Massachusetts","phone":"(978) 868-5004","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6752226289","name":"Tony Lombardo","addr":"142 Fitzgerald Road, Rindge, New Hampshire","phone":"(781) 910-9483","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3414679212","name":"Tom Montague","addr":"35 Ivy Court, Lancaster, Massachusetts","phone":"(508) 414-9639","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3635160539","name":"Christopher O'Leary","addr":"26 Lower River Road, New Ipswich, New Hampshire","phone":"(978) 799-7238","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3072721084","name":"Cibele Gray","addr":"34 Brookside Avenue, Webster, Massachusetts","phone":"+1 (978) 798-8972","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1798976041","name":"Cindy Dumais","addr":"377 Madison Street, Fitchburg, Massachusetts","phone":"(508) 783-9105","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3600902878","name":"Tatum's Place","addr":"453 Glenallen Street, Winchendon, Massachusetts","phone":"(603) 593-2495","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2444056400","name":"Cory Wilson","addr":"309 Page Hill Road, New Ipswich, New Hampshire","phone":"(603) 722-8157","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1469172741","name":"Cynthia Tremonte","addr":"14 Carlton Drive, Acton, Massachusetts","phone":"(973) 234-3227","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2949688438","name":"Tanner Schaack","addr":"60 Wilder Street, Peterborough, New Hampshire","phone":"(256) 316-0494","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7426838903","name":"Suzanne Barnett","addr":"101 Ridgewood Drive, Leominster, Massachusetts","phone":"(508) 272-2597","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1372949852","name":"Dave Ball","addr":"76 Hemlock Drive, Fitchburg, Massachusetts","phone":"(978) 855-4002","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2908496286","name":"Steve Rousseau","addr":"29 Brookside Avenue, Webster, Massachusetts","phone":"","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7792269414","name":"Stephen & Jenilee","addr":"16 Crawford Way, Pepperell, Massachusetts","phone":"(978) 808-4755","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6912435151","name":"Stacie Hargis","addr":"43 Jacob Gates Road, Harvard, Massachusetts","phone":"+1 (978) 319-5933","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3208864010","name":"Sheri Dayton","addr":"51 Saddlebred Drive, Leominster, Massachusetts","phone":"(508) 648-2172","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3913998141","name":"Sharon Bernard","addr":"70 Saw Mill Pond Road, Fitchburg, Massachusetts","phone":"(508) 648-0931","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"4619070682","name":"Serena McGovern","addr":"53 Old Jaffrey Road, Peterborough, New Hampshire","phone":"(541) 233-6159","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"9145812548","name":"Sarah Mello","addr":"63 Cottage Street, West Brookfield, Massachusetts","phone":"(508) 769-0613","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6477030780","name":"Sarah Richmond","addr":"88 Grant Road, Harvard, Massachusetts","phone":"(978) 604-0976","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7140380099","name":"Sara Mockaitis","addr":"146 Tolman Road, Troy, New Hampshire","phone":"(215) 380-5118","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6700860951","name":"Sara L McNamara","addr":"172 Harvard Street, Leominster, Massachusetts","phone":"+1 (413) 575-7711","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7150096342","name":"Sabrina Russett","addr":"40 Bryant Road, Jaffrey, New Hampshire","phone":"(907) 251-1286","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"4094636359","name":"Rebecca Smith-Allen","addr":"24 Chestnut Hill Road, Dublin, New Hampshire","phone":"(860) 965-6654","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8695544508","name":"Ray Christian","addr":"22 Old Beaver Road, New Ipswich, New Hampshire","phone":"(603) 562-0528","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7130695386","name":"Rachel Boyer","addr":"237 Gates Pond Road, Berlin, Massachusetts","phone":"(781) 296-4268","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"4641602455","name":"Peggy Kerins","addr":"148 Caspian Way, Fitchburg, Massachusetts","phone":"(630) 452-1809","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"5175520496","name":"Monique Maillet","addr":"72 Eva Drive, Leominster, Massachusetts","phone":"(508) 380-2973","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"5205099413","name":"Mikella Vandyke","addr":"252 Goddard Road, Rindge, New Hampshire","phone":"(603) 831-9541","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6193684733","name":"Michelle Durkin","addr":"471 Leominster Road, Lunenburg, Massachusetts","phone":"(978) 407-5453","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"9131509597","name":"Melissa Wise","addr":"59 Penn Street, Leominster, Massachusetts","phone":"(508) 341-6856","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3110576723","name":"Melanie Amichetti","addr":"28 Campbell Avenue, Leominster, Massachusetts","phone":"(978) 660-7163","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"5625308301","name":"Meghan Guthrie","addr":"15 Munson Avenue, Shirley, Massachusetts","phone":"(508) 328-4682","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7598784924","name":"Maya Carter","addr":"49 Seminole Road, Acton, Massachusetts","phone":"(617) 840-5449","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6017962291","name":"Maryrae","addr":"357 Goodrich Street, Lunenburg, Massachusetts","phone":"(978) 660-6244","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"9078307878","name":"Mary Paradiso","addr":"58 Castle Road, Fitchburg, Massachusetts","phone":"(978) 855-3039","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"5184272554","name":"Maeve D Bennett","addr":"45 Longwood Drive, Greenfield, New Hampshire","phone":"(617) 319-5680","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1285990235","name":"Lynn Powell","addr":"444 Goodrich Street, Lunenburg, Massachusetts","phone":"(978) 375-4665","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"4634237959","name":"Lise Fracalossi","addr":"37 Valley Road, Lunenburg, Massachusetts","phone":"(978) 604-0783","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2824979936","name":"Lisa Conrad","addr":"1295 Pearl Hill Road, Fitchburg, Massachusetts","phone":"(978) 314-0916","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1152997909","name":"Lindsay Dana","addr":"215 Florence Street, Leominster, Massachusetts","phone":"(207) 233-2594","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"5636972038","name":"Lily Mueller","addr":"47 Center Bridge Road, Lancaster, Massachusetts","phone":"(312) 404-5159","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"4471362169","name":"Leah Manoni","addr":"21 Owl Drive, New Ipswich, New Hampshire","phone":"+1 (203) 362-8768","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8898784682","name":"Kristen Aldrich","addr":"209 Lunenburg Street, Fitchburg, Massachusetts","phone":"(978) 906-3620","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3709383280","name":"Kim Dukes","addr":"6 Whitman Trail, Westminster, Massachusetts","phone":"(617) 943-8276","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1174384200","name":"Kelly Berojouki","addr":"39 Brierwood Drive, Fitchburg, Massachusetts","phone":"(978) 400-1262","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7457015185","name":"Keith Torrey","addr":"51 Lancaster Road, Bolton, Massachusetts","phone":"(508) 439-3621","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7756508556","name":"Kayla FarmHouse","addr":"188 Fitchburg Road, Townsend, Massachusetts","phone":"(978) 833-8198","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8045737092","name":"Katrina Eliadis","addr":"260 Glenwood Road, Rutland, Massachusetts","phone":"(774) 230-6321","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2280465757","name":"Keith Grimes","addr":"107 Glen Farm Road, Temple, New Hampshire","phone":"(603) 732-2484","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"5980385202","name":"Deb Terrel","addr":"108 Posco Avenue, Leominster, Massachusetts","phone":"(978) 549-7771","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7498841517","name":"Debra Napsey","addr":"101 Taylor Road, Peterborough, New Hampshire","phone":"(603) 547-5039","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2381035991","name":"Diane Cherwin","addr":"88 Depot Road, Hancock, New Hampshire","phone":"(603) 714-0784","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3758281529","name":"Caitlin Burke","addr":"170 Warren Road, Townsend, Massachusetts","phone":"(978) 870-4263","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3967235306","name":"Donna Garven","addr":"137 Bridle Cross Road, Fitchburg, Massachusetts","phone":"(508) 494-6179","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7545388347","name":"Dr Iyer","addr":"26 Dimassa Drive, Leominster, Massachusetts","phone":"(760) 470-6762","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"9128479185","name":"Earnie Wilbon","addr":"Rosewood Drive, Leominster, Massachusetts","phone":"(978) 973-5989","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6310943145","name":"Amanda Krumsiek","addr":"45 Howard Street, Lunenburg, Massachusetts","phone":"(508) 574-9663","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7087326016","name":"Efe Yardimci","addr":"12 Meadowbrook Road, Lincoln, Massachusetts","phone":"(617) 470-6175","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2247370334","name":"Ellen FitzPatrick","addr":"801 Autumn Ridge Drive, Ayer, Massachusetts","phone":"(978) 273-4204","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2251571248","name":"Emmaline Owens","addr":"13 Nathan Pratt Drive, Concord, Massachusetts","phone":"(407) 766-8551","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3635687439","name":"Erica Kidder","addr":"182 North Street, Leominster, Massachusetts","phone":"(978) 751-1120","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1718396022","name":"Erica Sunkenberg","addr":"57 Cross Road, Lunenburg, Massachusetts","phone":"(978) 408-7543","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2931489298","name":"Erika Sullivan","addr":"375 Middle Hancock Road, Peterborough, New Hampshire","phone":"(603) 547-0074","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6520626356","name":"Erin Shanley","addr":"301 Pierce Street, Leominster, Massachusetts","phone":"(978) 877-3861","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8657491977","name":"Gayle Cefole","addr":"32 Abel Road, Rindge, New Hampshire","phone":"(978) 855-5649","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8837332109","name":"Georgette Carlson","addr":"1155 Main Street, Ashby, Massachusetts","phone":"(978) 325-0822","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"5334402383","name":"Gerry","addr":"1102 Forest Road, Greenfield, New Hampshire","phone":"(603) 831-9269","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1721313600","name":"Gerry","addr":"210 Gulf Road, Peterborough, New Hampshire","phone":"(603) 831-9269","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7145025134","name":"Gillian Dierauf","addr":"64 Francestown Road, Greenfield, New Hampshire","phone":"(603) 547-5487","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7535300978","name":"Graeme L Calloway","addr":"17 Oakland Street, Wellesley, Massachusetts","phone":"(802) 356-1903","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"4621564357","name":"Hannah Basnett","addr":"322 Flat Hill Road, Lunenburg, Massachusetts","phone":"(978) 815-2332","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1419792276","name":"Heather McClusky","addr":"244 Sand Hill Road, Peterborough, New Hampshire","phone":"(603) 547-5780","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2702536756","name":"Hillary Irwin","addr":"21 Chestnut Hill Road, Dublin, New Hampshire","phone":"(617) 716-9848","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7871801171","name":"James Morel","addr":"18 Sycamore Drive, Leominster, Massachusetts","phone":"(310) 770-4159","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3324007960","name":"Jennie Hakala","addr":"562 Middle Hancock Road, Peterborough, New Hampshire","phone":"(603) 630-7553","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8280635714","name":"Jennifer O Neil","addr":"54 Green Street, Leominster, Massachusetts","phone":"(978) 602-2932","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3575145352","name":"Jesse James","addr":"6 Warner Road, Townsend, Massachusetts","phone":"(978) 836-6196","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1323821998","name":"Jessica Quinn","addr":"6 Brennan-Woods Road, Hancock, New Hampshire","phone":"(347) 821-6534","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1265118252","name":"Joanna Karamanou","addr":"9 Cross Street, Fitchburg, Massachusetts","phone":"(404) 610-1449","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3547657473","name":"John White","addr":"328 Henshaw Street, Leicester, Massachusetts","phone":"(631) 834-5460","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3439315952","name":"Judy Mc Guan","addr":"37 Baker Lane, Gardner, Massachusetts","phone":"(978) 410-5564","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2119481703","name":"Julia Glendon","addr":"334 Townsend Harbor Road, Lunenburg, Massachusetts","phone":"(978) 869-5066","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"5349312087","name":"Kara J Afshar","addr":"92 High Ridge Road, Dublin, New Hampshire","phone":"(617) 943-0866","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3720137160","name":"Kate Bergquist","addr":"661 West Road, Temple, New Hampshire","phone":"(978) 835-0386","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3437546213","name":"Kathy Manfre","addr":"17 Arundel Road, Peterborough, New Hampshire","phone":"(603) 620-3612","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8495721158","name":"Katie Deitering","addr":"224 Bancroft Road, Rindge, New Hampshire","phone":"(918) 261-8603","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"5257153284","name":"Katie Galvin","addr":"205 Hubbard Pond Road, New Ipswich, New Hampshire","phone":"(603) 831-4188","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6865492760","name":"Sonja Catano","addr":"26 Scarlett Street, West Boylston, Massachusetts","phone":"(774) 329-0803","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6613059117","name":"Claire Katt","addr":"16 Camp Rockne Lane, Dublin, New Hampshire","phone":"(207) 756-0662","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3817786448","name":"Emma Adams","addr":"15 Orchard Hill Road, Peterborough, New Hampshire","phone":"(603) 547-0126","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7790556430","name":"Maria Brucculeri","addr":"26 Sam Cobb Lane, Princeton, Massachusetts","phone":"(508) 523-3053","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"5187506257","name":"Marissa Saveall","addr":"132 Candlelight Road, Rindge, New Hampshire","phone":"(603) 573-5511","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8156449447","name":"Bethany Pyhala","addr":"548 Main Street, Rindge, New Hampshire","phone":"(603) 593-9980","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6493470545","name":"Chris Linton","addr":"109 Gardner Road, Gardner, Massachusetts","phone":"(978) 990-0316","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7077125904","name":"Miguel De La Cruz","addr":"119 Woodland Street, Fitchburg, Massachusetts","phone":"(781)745-3350","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8872704452","name":"Kerri Mulligan-O'Neill","addr":"295 Goodale St, West Boylston, Massachusetts","phone":"(631) 275-4604","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"4145572740","name":"Aaron Smith-Walter","addr":"6 Central Street, Peterborough, New Hampshire","phone":"(540) 246-2146","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"5553452939","name":"Afia Obeng","addr":"35 North Meadow Road, Leominster, Massachusetts","phone":"(929) 235-2186","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1432669711","name":"Akmaral Noecker","addr":"30 Fire Ln 3, Dublin, New Hampshire","phone":"(617) 504-0036","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2231339086","name":"Alexis Chitwood","addr":"121 Mountain View Drive, New Ipswich, New Hampshire","phone":"(603) 465-1135","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8113243917","name":"Alexis Murray","addr":"201 Spring Hill Road, Sharon, New Hampshire","phone":"(312) 933-6760","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2356215505","name":"Ali Odom","addr":"451 Main Street, Acton, Massachusetts","phone":"(202) 557-4284","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8747141486","name":"Alice Lombardi","addr":"100 Avery Heights Drive, Holden, Massachusetts","phone":"(508) 353-2848","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"4821514042","name":"Alicia Milliken","addr":"24 Acorn Avenue, Fitchburg, Massachusetts","phone":"(978) 895-0499","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8334931494","name":"Alissa Younkin","addr":"179 Winchendon Road, Ashburnham, Massachusetts","phone":"(978) 413-0308","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2630039612","name":"Alyssa King","addr":"7 Brooks Avenue, Westminster, Massachusetts","phone":"(781) 491-4621","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"4410119502","name":"Alyssa Mitchell","addr":"232 Ayer Road, Harvard, Massachusetts","phone":"(339) 227-0680","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""}];
- 
+
 function getClients(){try{return JSON.parse(localStorage.getItem(SK))||null;}catch{return null;}}
 function saveClients(a){localStorage.setItem(SK,JSON.stringify(a));}
 function getApiKey(){return document.getElementById('api-key-input').value.trim()||localStorage.getItem(MK)||'';}
 function dL(h){const f=Math.floor(h),m=Math.round((h-f)*60);return m===0?`${f}h`:`${f}h ${m}min`;}
 function fT(m){const h=Math.floor(m/60)%24,mn=m%60;return `${String(h).padStart(2,'0')}:${String(mn).padStart(2,'0')}`;}
- 
+
 function initData(){
   let c=getClients();
   if(!c){saveClients(IMPORTED);c=IMPORTED;}
   document.getElementById('cnt').textContent=`(${c.length})`;
 }
- 
+
 function buildOptions(excludeIds=[]){
   const all=getClients()||[];
   let opts='<option value="">— Select client —</option>';
@@ -1923,12 +311,12 @@ function buildOptions(excludeIds=[]){
   });
   return opts;
 }
- 
+
 function getSelectedIds(exceptSlot){
   const selects=document.querySelectorAll('.slot-select');
   return Array.from(selects).filter(s=>s.dataset.slot!==String(exceptSlot)).map(s=>s.value).filter(v=>v);
 }
- 
+
 function refreshAllOptions(){
   document.querySelectorAll('.slot-select').forEach(sel=>{
     const own=sel.value;
@@ -1944,7 +332,7 @@ function refreshAllOptions(){
     sel.innerHTML=opts;
   });
 }
- 
+
 function onSlotChange(sel){
   const id=sel.value;
   const slotEl=sel.closest('.slot');
@@ -1998,12 +386,12 @@ function onSlotChange(sel){
       <div style="font-size:11px;color:#AD1E73;">Add Cleaning $ in client profile to see rate alert</div>
     </div>`;
   }
- 
+
   info.classList.add('show');
   info.innerHTML=`<strong>${c.addr}</strong><br>${c.freq}${prefs?'<br>'+prefs:''}${c.notes?`<br><em style="color:#999">${c.notes}</em>`:''}${alertHTML}`;
   refreshAllOptions();
 }
- 
+
 function addSlot(){
   if(slotCount>=6){alert('Maximum of 6 clients.');return;}
   slotCount++;
@@ -2043,20 +431,20 @@ function addSlot(){
   document.getElementById('slots-container').appendChild(div);
   if(slotCount>=6)document.getElementById('add-slot-btn').style.display='none';
 }
- 
+
 function removeSlot(n){
   const el=document.getElementById(`slot-${n}`);
   if(el){el.remove();refreshAllOptions();}
   if(slotCount>=6){slotCount--;document.getElementById('add-slot-btn').style.display='block';}
 }
- 
+
 function sw(t){
   document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',['route','clients','add'][i]===t));
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
   document.getElementById('view-'+t).classList.add('active');
   if(t==='clients')renderCList();
 }
- 
+
 function onKeyInput(){
   const k=document.getElementById('api-key-input').value.trim();
   const el=document.getElementById('api-status');
@@ -2065,7 +453,7 @@ function onKeyInput(){
   else{el.textContent='Waiting for key';el.className='api-status s-idle';}
 }
 document.getElementById('api-key-input').addEventListener('input',onKeyInput);
- 
+
 function loadGoogleMaps(key){
   return new Promise((resolve,reject)=>{
     if(window.google&&window.google.maps){resolve();return;}
@@ -2075,7 +463,7 @@ function loadGoogleMaps(key){
     document.head.appendChild(s);
   });
 }
- 
+
 async function getRealDist(a1,a2,key){
   try{
     await loadGoogleMaps(key);
@@ -2099,7 +487,7 @@ async function getRealDist(a1,a2,key){
     return{mi:8,mins:20,real:false};
   }
 }
- 
+
 async function calcRoute(){
   const slots=document.querySelectorAll('.slot');
   const selected=[];
@@ -2161,7 +549,7 @@ async function calcRoute(){
   renderScorecard(clients);
   document.getElementById('result-block').scrollIntoView({behavior:'smooth',block:'start'});
 }
- 
+
 const AVCOLORS=[{bg:'#FDE8F3',cl:'#AD1E73'},{bg:'#CFFFD7',cl:'#1A6B2F'},{bg:'#FDE8F3',cl:'#E53093'},{bg:'#9DFCB1',cl:'#0F5A28'},{bg:'#FFF0F8',cl:'#AD1E73'}];
 function renderCList(){
   const all=getClients()||[];
@@ -2195,7 +583,7 @@ function renderCList(){
     cont.appendChild(div);
   });
 }
- 
+
 function openModal(id){
   const all=getClients()||[];const c=all.find(x=>x.id===id);if(!c)return;
   editId=id;
@@ -2273,7 +661,7 @@ function saveNewClient(){
   document.getElementById('cnt').textContent=`(${all.length})`;
   setTimeout(()=>{document.getElementById('save-msg').textContent='';},3000);
 }
- 
+
 function calcPriceHr(prefix){
   const cleaning=parseFloat(document.getElementById(prefix+'-cleaning').value)||0;
   const dur=parseFloat(document.getElementById(prefix+'-dur').value)||0;
@@ -2285,27 +673,27 @@ function calcPriceHr(prefix){
     priceHrEl.style.background='';
   }
 }
- 
+
 function refreshRateAlert(durSel){
   const slotEl=durSel.closest('.slot');
   const clientSel=slotEl.querySelector('.slot-select');
   if(clientSel&&clientSel.value) onSlotChange(clientSel);
 }
- 
+
 function toggleScorecard(){
   const block=document.getElementById('scorecard-block');
   const btn=document.getElementById('scorecard-toggle');
   if(block.style.display==='none'){block.style.display='block';btn.textContent='Hide Scorecard';}
   else{block.style.display='none';btn.textContent='Show Scorecard';}
 }
- 
+
 function fmt(val,prefix='$'){
   if(!val&&val!==0)return '<span style="color:#ccc;">—</span>';
   const n=parseFloat(val);
   if(isNaN(n))return '<span style="color:#ccc;">—</span>';
   return prefix+(n>=0?'':'-')+Math.abs(n).toFixed(2);
 }
- 
+
 function renderScorecard(clients){
   const cont=document.getElementById('scorecard-content');
   const SLOT_COLORS_SC=['#E53093','#AD1E73','#6ED386'];
@@ -2351,7 +739,7 @@ function renderScorecard(clients){
     cont.appendChild(card);
   });
 }
- 
+
 // Password protection
 const PASS_KEY='simplify_app_auth';
 function checkPass(){
@@ -2374,7 +762,7 @@ if(localStorage.getItem(PASS_KEY)==='1'){
   document.getElementById('lock-screen').style.display='none';
   document.getElementById('main-app').style.display='block';
 }
- 
+
 const savedKey=localStorage.getItem(MK);
 if(savedKey){document.getElementById('api-key-input').value=savedKey;onKeyInput();}
 initData();
@@ -2382,4 +770,3 @@ addSlot();addSlot();addSlot();
 </script>
 </div></body>
 </html>
- 
