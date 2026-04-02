@@ -25,7 +25,9 @@ body{font-family:'Sora',sans-serif;background:#FFF7FB;color:#1a1a1a;min-height:1
 .slot{background:white;border:1px solid #e8e8e6;border-radius:12px;padding:14px 16px;margin-bottom:10px;position:relative;}
 .slot-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
 .slot-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0;}
-.slot-label{font-size:14px;font-weight:600;color:#1a1a1a;}
+.slot-label{font-size:14px;font-weight:600;color:#1a1a1a;flex:1;}
+.slot-pref-badge{font-size:11px;background:#E8F5E9;color:#2E7D32;padding:2px 8px;border-radius:99px;font-weight:600;}
+.slot-avg-badge{font-size:11px;background:#E3F2FD;color:#1565C0;padding:2px 8px;border-radius:99px;font-weight:600;}
 .slot select{width:100%;padding:9px 12px;border:1px solid #ddd;border-radius:8px;font-size:13px;background:white;color:#1a1a1a;appearance:auto;}
 .slot select:focus{outline:none;border-color:#E53093;}
 .dur-row{display:flex;align-items:center;gap:6px;margin-top:8px;flex-wrap:wrap;}
@@ -35,6 +37,7 @@ body{font-family:'Sora',sans-serif;background:#FFF7FB;color:#1a1a1a;min-height:1
 .slot-info.show{display:block;}
 .slot-info strong{color:#1a1a1a;font-weight:500;}
 .pref-pill{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;background:#CFFFD7;color:#1A6B2F;margin:2px 2px 0 0;}
+.avg-pill{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;background:#DBEAFE;color:#1D4ED8;margin:2px 2px 0 0;font-weight:600;}
 .remove-slot{position:absolute;top:12px;right:12px;background:none;border:none;color:#bbb;cursor:pointer;font-size:20px;line-height:1;}
 .remove-slot:hover{color:#A32D2D;}
 .add-slot-btn{width:100%;padding:11px;border:1.5px dashed #E53093;border-radius:10px;background:none;font-size:13px;color:#888;cursor:pointer;margin-bottom:10px;}
@@ -91,10 +94,11 @@ body{font-family:'Sora',sans-serif;background:#FFF7FB;color:#1a1a1a;min-height:1
 .note{font-size:11px;color:#999;margin-top:6px;}
 .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:999;align-items:center;justify-content:center;}
 .modal-overlay.open{display:flex;}
-.modal{background:white;border-radius:14px;padding:20px;width:90%;max-width:460px;}
+.modal{background:white;border-radius:14px;padding:20px;width:90%;max-width:460px;max-height:90vh;overflow-y:auto;}
 .modal-title{font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:14px;}
 .btn-save{width:100%;padding:11px;background:#E53093;color:white;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;margin-top:8px;}
 .btn-cancel{width:100%;padding:9px;background:white;border:1px solid #ddd;border-radius:9px;font-size:13px;cursor:pointer;margin-top:6px;color:#1a1a1a;}
+.hist-badge{display:inline-flex;align-items:center;gap:4px;background:#EDE9FE;color:#5B21B6;border-radius:99px;padding:3px 10px;font-size:11px;font-weight:600;margin-bottom:10px;}
 @media print{.header,.tabs,.api-bar,.add-slot-btn,.btn-calc,.btn-print,.slot,.settings-card{display:none!important;}.result-card{border:none;}}
 </style>
 </head>
@@ -110,6 +114,7 @@ body{font-family:'Sora',sans-serif;background:#FFF7FB;color:#1a1a1a;min-height:1
     <button onclick="checkPass()" style="width:100%;padding:12px;background:#E53093;color:white;border:none;border-radius:50px;font-size:14px;font-weight:600;cursor:pointer;">Enter</button>
   </div>
 </div>
+
 <div id="main-app" style="display:none;">
 <div class="header">
   <div>
@@ -168,8 +173,6 @@ body{font-family:'Sora',sans-serif;background:#FFF7FB;color:#1a1a1a;min-height:1
         </div>
       </div>
       <button id="scorecard-toggle" style="display:none;width:100%;padding:10px;margin-top:8px;background:white;color:#AD1E73;border:2px solid #AD1E73;border-radius:50px;font-size:13px;font-weight:600;cursor:pointer;" onclick="toggleScorecard()">Show Scorecard</button>
-      <div style="display:none;">
-      </div>
     </div>
   </div>
 
@@ -239,6 +242,7 @@ body{font-family:'Sora',sans-serif;background:#FFF7FB;color:#1a1a1a;min-height:1
 <div class="modal-overlay" id="pref-modal" onclick="if(event.target.id==='pref-modal')closeModal()">
   <div class="modal">
     <p class="modal-title" id="modal-title">Preferences</p>
+    <div id="modal-hist-info" style="display:none;margin-bottom:12px;"></div>
     <div class="r2" style="margin-bottom:8px;">
       <div class="field"><label>Duration</label>
         <input type="number" id="m-dur" value="3" min="0.5" max="8" step="0.25" placeholder="ex: 2.5" oninput="calcPriceHr('m')">
@@ -282,13 +286,13 @@ body{font-family:'Sora',sans-serif;background:#FFF7FB;color:#1a1a1a;min-height:1
 </div>
 
 <script>
-const SK='simplify_v3';
+const SK='simplify_v4';
 const MK='simplify_gmaps_key';
 const SLOT_COLORS=['#E53093','#AD1E73','#6ED386','#E53093','#AD1E73','#6ED386'];
 let slotCount=0;
 let editId=null;
 
-const IMPORTED=[{"id":"3269713362","name":"Alena Martiros","addr":"303 New Ipswich Road, Ashby, Massachusetts","phone":"(508) 789-5691","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8577351766","name":"Alex Brown","addr":"1778 Wedgewood Common, Concord, Massachusetts","phone":"(617) 510-1158","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3625962366","name":"Amber Calkins","addr":"139 Kendall Hill Road, Sterling, Massachusetts","phone":"(603) 852-5049","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"4110497403","name":"Amy and Cliff Worthley","addr":"53 Woodland Drive, Lunenburg, Massachusetts","phone":"(978) 821-9529","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8949034265","name":"Andrew Osterman","addr":"16 Elm Street, Peterborough, New Hampshire","phone":"(202) 422-5994","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8089199656","name":"Aubie Kilbourn","addr":"41 Squire Shaler Lane, Lancaster, Massachusetts","phone":"(978) 870-9075","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6867204702","name":"Bill Shuyler","addr":"6 Village Way, Rutland, Massachusetts","phone":"(508) 886-2494","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8803197089","name":"Bob Heske","addr":"152 State Road West, Westminster, Massachusetts","phone":"(508) 868-3116","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3812410609","name":"Bob Mullins","addr":"8 Almanac Way, West Boylston, Massachusetts","phone":"(508) 816-3795","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1998748327","name":"Vivian Juusola","addr":"19 Sauna Row Road, Townsend, Massachusetts","phone":"(617) 763-6890","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3880412730","name":"Brenda Boudreau","addr":"2 Old Battery Road, Townsend, Massachusetts","phone":"(508) 574-9664","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1308476855","name":"Virginia Drummond","addr":"102 Parker Hill Drive, Fitchburg, Massachusetts","phone":"(978) 501-2844","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2536572733","name":"Carol Leger","addr":"90 Contoocook Lane, Peterborough, New Hampshire","phone":"(978) 660-8558","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2396664789","name":"Cassandra J Trice","addr":"12 Margaret Street, Gardner, Massachusetts","phone":"+1 (508) 615-4928","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7552142750","name":"Valerie D Jenkind","addr":"79 Robbe Farm Road, Peterborough, New Hampshire","phone":"(978) 877-3283","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"4692029081","name":"Charlene Diotalevi","addr":"62 Heywood Road, Sterling, Massachusetts","phone":"(508) 259-6816","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7103393705","name":"Chelsea","addr":"2 Highland Drive, Peterborough, New Hampshire","phone":"(630) 865-6935","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"9176618999","name":"Tony Pineyro","addr":"16 Sanderson Street, Leominster, Massachusetts","phone":"(978) 868-5004","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6752226289","name":"Tony Lombardo","addr":"142 Fitzgerald Road, Rindge, New Hampshire","phone":"(781) 910-9483","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3414679212","name":"Tom Montague","addr":"35 Ivy Court, Lancaster, Massachusetts","phone":"(508) 414-9639","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3635160539","name":"Christopher O'Leary","addr":"26 Lower River Road, New Ipswich, New Hampshire","phone":"(978) 799-7238","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3072721084","name":"Cibele Gray","addr":"34 Brookside Avenue, Webster, Massachusetts","phone":"+1 (978) 798-8972","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1798976041","name":"Cindy Dumais","addr":"377 Madison Street, Fitchburg, Massachusetts","phone":"(508) 783-9105","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3600902878","name":"Tatum's Place","addr":"453 Glenallen Street, Winchendon, Massachusetts","phone":"(603) 593-2495","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2444056400","name":"Cory Wilson","addr":"309 Page Hill Road, New Ipswich, New Hampshire","phone":"(603) 722-8157","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1469172741","name":"Cynthia Tremonte","addr":"14 Carlton Drive, Acton, Massachusetts","phone":"(973) 234-3227","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2949688438","name":"Tanner Schaack","addr":"60 Wilder Street, Peterborough, New Hampshire","phone":"(256) 316-0494","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7426838903","name":"Suzanne Barnett","addr":"101 Ridgewood Drive, Leominster, Massachusetts","phone":"(508) 272-2597","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1372949852","name":"Dave Ball","addr":"76 Hemlock Drive, Fitchburg, Massachusetts","phone":"(978) 855-4002","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2908496286","name":"Steve Rousseau","addr":"29 Brookside Avenue, Webster, Massachusetts","phone":"","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7792269414","name":"Stephen & Jenilee","addr":"16 Crawford Way, Pepperell, Massachusetts","phone":"(978) 808-4755","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6912435151","name":"Stacie Hargis","addr":"43 Jacob Gates Road, Harvard, Massachusetts","phone":"+1 (978) 319-5933","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3208864010","name":"Sheri Dayton","addr":"51 Saddlebred Drive, Leominster, Massachusetts","phone":"(508) 648-2172","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3913998141","name":"Sharon Bernard","addr":"70 Saw Mill Pond Road, Fitchburg, Massachusetts","phone":"(508) 648-0931","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"4619070682","name":"Serena McGovern","addr":"53 Old Jaffrey Road, Peterborough, New Hampshire","phone":"(541) 233-6159","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"9145812548","name":"Sarah Mello","addr":"63 Cottage Street, West Brookfield, Massachusetts","phone":"(508) 769-0613","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6477030780","name":"Sarah Richmond","addr":"88 Grant Road, Harvard, Massachusetts","phone":"(978) 604-0976","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7140380099","name":"Sara Mockaitis","addr":"146 Tolman Road, Troy, New Hampshire","phone":"(215) 380-5118","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6700860951","name":"Sara L McNamara","addr":"172 Harvard Street, Leominster, Massachusetts","phone":"+1 (413) 575-7711","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7150096342","name":"Sabrina Russett","addr":"40 Bryant Road, Jaffrey, New Hampshire","phone":"(907) 251-1286","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"4094636359","name":"Rebecca Smith-Allen","addr":"24 Chestnut Hill Road, Dublin, New Hampshire","phone":"(860) 965-6654","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8695544508","name":"Ray Christian","addr":"22 Old Beaver Road, New Ipswich, New Hampshire","phone":"(603) 562-0528","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7130695386","name":"Rachel Boyer","addr":"237 Gates Pond Road, Berlin, Massachusetts","phone":"(781) 296-4268","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"4641602455","name":"Peggy Kerins","addr":"148 Caspian Way, Fitchburg, Massachusetts","phone":"(630) 452-1809","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"5175520496","name":"Monique Maillet","addr":"72 Eva Drive, Leominster, Massachusetts","phone":"(508) 380-2973","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"5205099413","name":"Mikella Vandyke","addr":"252 Goddard Road, Rindge, New Hampshire","phone":"(603) 831-9541","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6193684733","name":"Michelle Durkin","addr":"471 Leominster Road, Lunenburg, Massachusetts","phone":"(978) 407-5453","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"9131509597","name":"Melissa Wise","addr":"59 Penn Street, Leominster, Massachusetts","phone":"(508) 341-6856","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3110576723","name":"Melanie Amichetti","addr":"28 Campbell Avenue, Leominster, Massachusetts","phone":"(978) 660-7163","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"5625308301","name":"Meghan Guthrie","addr":"15 Munson Avenue, Shirley, Massachusetts","phone":"(508) 328-4682","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7598784924","name":"Maya Carter","addr":"49 Seminole Road, Acton, Massachusetts","phone":"(617) 840-5449","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6017962291","name":"Maryrae","addr":"357 Goodrich Street, Lunenburg, Massachusetts","phone":"(978) 660-6244","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"9078307878","name":"Mary Paradiso","addr":"58 Castle Road, Fitchburg, Massachusetts","phone":"(978) 855-3039","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"5184272554","name":"Maeve D Bennett","addr":"45 Longwood Drive, Greenfield, New Hampshire","phone":"(617) 319-5680","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1285990235","name":"Lynn Powell","addr":"444 Goodrich Street, Lunenburg, Massachusetts","phone":"(978) 375-4665","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"4634237959","name":"Lise Fracalossi","addr":"37 Valley Road, Lunenburg, Massachusetts","phone":"(978) 604-0783","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2824979936","name":"Lisa Conrad","addr":"1295 Pearl Hill Road, Fitchburg, Massachusetts","phone":"(978) 314-0916","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1152997909","name":"Lindsay Dana","addr":"215 Florence Street, Leominster, Massachusetts","phone":"(207) 233-2594","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"5636972038","name":"Lily Mueller","addr":"47 Center Bridge Road, Lancaster, Massachusetts","phone":"(312) 404-5159","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"4471362169","name":"Leah Manoni","addr":"21 Owl Drive, New Ipswich, New Hampshire","phone":"+1 (203) 362-8768","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8898784682","name":"Kristen Aldrich","addr":"209 Lunenburg Street, Fitchburg, Massachusetts","phone":"(978) 906-3620","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3709383280","name":"Kim Dukes","addr":"6 Whitman Trail, Westminster, Massachusetts","phone":"(617) 943-8276","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1174384200","name":"Kelly Berojouki","addr":"39 Brierwood Drive, Fitchburg, Massachusetts","phone":"(978) 400-1262","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7457015185","name":"Keith Torrey","addr":"51 Lancaster Road, Bolton, Massachusetts","phone":"(508) 439-3621","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7756508556","name":"Kayla FarmHouse","addr":"188 Fitchburg Road, Townsend, Massachusetts","phone":"(978) 833-8198","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8045737092","name":"Katrina Eliadis","addr":"260 Glenwood Road, Rutland, Massachusetts","phone":"(774) 230-6321","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2280465757","name":"Keith Grimes","addr":"107 Glen Farm Road, Temple, New Hampshire","phone":"(603) 732-2484","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"5980385202","name":"Deb Terrel","addr":"108 Posco Avenue, Leominster, Massachusetts","phone":"(978) 549-7771","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7498841517","name":"Debra Napsey","addr":"101 Taylor Road, Peterborough, New Hampshire","phone":"(603) 547-5039","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2381035991","name":"Diane Cherwin","addr":"88 Depot Road, Hancock, New Hampshire","phone":"(603) 714-0784","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3758281529","name":"Caitlin Burke","addr":"170 Warren Road, Townsend, Massachusetts","phone":"(978) 870-4263","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3967235306","name":"Donna Garven","addr":"137 Bridle Cross Road, Fitchburg, Massachusetts","phone":"(508) 494-6179","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7545388347","name":"Dr Iyer","addr":"26 Dimassa Drive, Leominster, Massachusetts","phone":"(760) 470-6762","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"9128479185","name":"Earnie Wilbon","addr":"Rosewood Drive, Leominster, Massachusetts","phone":"(978) 973-5989","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6310943145","name":"Amanda Krumsiek","addr":"45 Howard Street, Lunenburg, Massachusetts","phone":"(508) 574-9663","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7087326016","name":"Efe Yardimci","addr":"12 Meadowbrook Road, Lincoln, Massachusetts","phone":"(617) 470-6175","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2247370334","name":"Ellen FitzPatrick","addr":"801 Autumn Ridge Drive, Ayer, Massachusetts","phone":"(978) 273-4204","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2251571248","name":"Emmaline Owens","addr":"13 Nathan Pratt Drive, Concord, Massachusetts","phone":"(407) 766-8551","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3635687439","name":"Erica Kidder","addr":"182 North Street, Leominster, Massachusetts","phone":"(978) 751-1120","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1718396022","name":"Erica Sunkenberg","addr":"57 Cross Road, Lunenburg, Massachusetts","phone":"(978) 408-7543","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2931489298","name":"Erika Sullivan","addr":"375 Middle Hancock Road, Peterborough, New Hampshire","phone":"(603) 547-0074","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6520626356","name":"Erin Shanley","addr":"301 Pierce Street, Leominster, Massachusetts","phone":"(978) 877-3861","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8657491977","name":"Gayle Cefole","addr":"32 Abel Road, Rindge, New Hampshire","phone":"(978) 855-5649","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8837332109","name":"Georgette Carlson","addr":"1155 Main Street, Ashby, Massachusetts","phone":"(978) 325-0822","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"5334402383","name":"Gerry","addr":"1102 Forest Road, Greenfield, New Hampshire","phone":"(603) 831-9269","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1721313600","name":"Gerry","addr":"210 Gulf Road, Peterborough, New Hampshire","phone":"(603) 831-9269","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7145025134","name":"Gillian Dierauf","addr":"64 Francestown Road, Greenfield, New Hampshire","phone":"(603) 547-5487","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7535300978","name":"Graeme L Calloway","addr":"17 Oakland Street, Wellesley, Massachusetts","phone":"(802) 356-1903","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"4621564357","name":"Hannah Basnett","addr":"322 Flat Hill Road, Lunenburg, Massachusetts","phone":"(978) 815-2332","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1419792276","name":"Heather McClusky","addr":"244 Sand Hill Road, Peterborough, New Hampshire","phone":"(603) 547-5780","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2702536756","name":"Hillary Irwin","addr":"21 Chestnut Hill Road, Dublin, New Hampshire","phone":"(617) 716-9848","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7871801171","name":"James Morel","addr":"18 Sycamore Drive, Leominster, Massachusetts","phone":"(310) 770-4159","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3324007960","name":"Jennie Hakala","addr":"562 Middle Hancock Road, Peterborough, New Hampshire","phone":"(603) 630-7553","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8280635714","name":"Jennifer O Neil","addr":"54 Green Street, Leominster, Massachusetts","phone":"(978) 602-2932","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3575145352","name":"Jesse James","addr":"6 Warner Road, Townsend, Massachusetts","phone":"(978) 836-6196","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1323821998","name":"Jessica Quinn","addr":"6 Brennan-Woods Road, Hancock, New Hampshire","phone":"(347) 821-6534","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1265118252","name":"Joanna Karamanou","addr":"9 Cross Street, Fitchburg, Massachusetts","phone":"(404) 610-1449","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3547657473","name":"John White","addr":"328 Henshaw Street, Leicester, Massachusetts","phone":"(631) 834-5460","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3439315952","name":"Judy Mc Guan","addr":"37 Baker Lane, Gardner, Massachusetts","phone":"(978) 410-5564","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2119481703","name":"Julia Glendon","addr":"334 Townsend Harbor Road, Lunenburg, Massachusetts","phone":"(978) 869-5066","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"5349312087","name":"Kara J Afshar","addr":"92 High Ridge Road, Dublin, New Hampshire","phone":"(617) 943-0866","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3720137160","name":"Kate Bergquist","addr":"661 West Road, Temple, New Hampshire","phone":"(978) 835-0386","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3437546213","name":"Kathy Manfre","addr":"17 Arundel Road, Peterborough, New Hampshire","phone":"(603) 620-3612","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8495721158","name":"Katie Deitering","addr":"224 Bancroft Road, Rindge, New Hampshire","phone":"(918) 261-8603","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"5257153284","name":"Katie Galvin","addr":"205 Hubbard Pond Road, New Ipswich, New Hampshire","phone":"(603) 831-4188","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6865492760","name":"Sonja Catano","addr":"26 Scarlett Street, West Boylston, Massachusetts","phone":"(774) 329-0803","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6613059117","name":"Claire Katt","addr":"16 Camp Rockne Lane, Dublin, New Hampshire","phone":"(207) 756-0662","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"3817786448","name":"Emma Adams","addr":"15 Orchard Hill Road, Peterborough, New Hampshire","phone":"(603) 547-0126","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7790556430","name":"Maria Brucculeri","addr":"26 Sam Cobb Lane, Princeton, Massachusetts","phone":"(508) 523-3053","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"5187506257","name":"Marissa Saveall","addr":"132 Candlelight Road, Rindge, New Hampshire","phone":"(603) 573-5511","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8156449447","name":"Bethany Pyhala","addr":"548 Main Street, Rindge, New Hampshire","phone":"(603) 593-9980","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"6493470545","name":"Chris Linton","addr":"109 Gardner Road, Gardner, Massachusetts","phone":"(978) 990-0316","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"7077125904","name":"Miguel De La Cruz","addr":"119 Woodland Street, Fitchburg, Massachusetts","phone":"(781)745-3350","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8872704452","name":"Kerri Mulligan-O'Neill","addr":"295 Goodale St, West Boylston, Massachusetts","phone":"(631) 275-4604","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"4145572740","name":"Aaron Smith-Walter","addr":"6 Central Street, Peterborough, New Hampshire","phone":"(540) 246-2146","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"5553452939","name":"Afia Obeng","addr":"35 North Meadow Road, Leominster, Massachusetts","phone":"(929) 235-2186","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"1432669711","name":"Akmaral Noecker","addr":"30 Fire Ln 3, Dublin, New Hampshire","phone":"(617) 504-0036","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2231339086","name":"Alexis Chitwood","addr":"121 Mountain View Drive, New Ipswich, New Hampshire","phone":"(603) 465-1135","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8113243917","name":"Alexis Murray","addr":"201 Spring Hill Road, Sharon, New Hampshire","phone":"(312) 933-6760","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2356215505","name":"Ali Odom","addr":"451 Main Street, Acton, Massachusetts","phone":"(202) 557-4284","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8747141486","name":"Alice Lombardi","addr":"100 Avery Heights Drive, Holden, Massachusetts","phone":"(508) 353-2848","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"4821514042","name":"Alicia Milliken","addr":"24 Acorn Avenue, Fitchburg, Massachusetts","phone":"(978) 895-0499","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"8334931494","name":"Alissa Younkin","addr":"179 Winchendon Road, Ashburnham, Massachusetts","phone":"(978) 413-0308","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"2630039612","name":"Alyssa King","addr":"7 Brooks Avenue, Westminster, Massachusetts","phone":"(781) 491-4621","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""},{"id":"4410119502","name":"Alyssa Mitchell","addr":"232 Ayer Road, Harvard, Massachusetts","phone":"(339) 227-0680","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":""}];
+const IMPORTED=[{"id":"3269713362","name":"Alena Martiros","addr":"303 New Ipswich Road, Ashby, Massachusetts","phone":"(508) 789-5691","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Monday","prefTime":"","notes":"","avgHours":4.12},{"id":"8577351766","name":"Alex Brown","addr":"1778 Wedgewood Common, Concord, Massachusetts","phone":"(617) 510-1158","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":3.15},{"id":"3625962366","name":"Amber Calkins","addr":"139 Kendall Hill Road, Sterling, Massachusetts","phone":"(603) 852-5049","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Thursday","prefTime":"","notes":"","avgHours":4.57},{"id":"4110497403","name":"Amy and Cliff Worthley","addr":"53 Woodland Drive, Lunenburg, Massachusetts","phone":"(978) 821-9529","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":2.5},{"id":"8949034265","name":"Andrew Osterman","addr":"16 Elm Street, Peterborough, New Hampshire","phone":"(202) 422-5994","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Monday","prefTime":"","notes":"","avgHours":4.47},{"id":"8089199656","name":"Aubie Kilbourn","addr":"41 Squire Shaler Lane, Lancaster, Massachusetts","phone":"(978) 870-9075","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":4.06},{"id":"6867204702","name":"Bill Shuyler","addr":"6 Village Way, Rutland, Massachusetts","phone":"(508) 886-2494","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":2.16},{"id":"8803197089","name":"Bob Heske","addr":"152 State Road West, Westminster, Massachusetts","phone":"(508) 868-3116","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":3.39},{"id":"3812410609","name":"Bob Mullins","addr":"8 Almanac Way, West Boylston, Massachusetts","phone":"(508) 816-3795","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Thursday","prefTime":"","notes":"","avgHours":3.76},{"id":"1998748327","name":"Vivian Juusola","addr":"19 Sauna Row Road, Townsend, Massachusetts","phone":"(617) 763-6890","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":3.13},{"id":"3880412730","name":"Brenda Boudreau","addr":"2 Old Battery Road, Townsend, Massachusetts","phone":"(508) 574-9664","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":3.36},{"id":"1308476855","name":"Virginia Drummond","addr":"102 Parker Hill Drive, Fitchburg, Massachusetts","phone":"(978) 501-2844","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":3.24},{"id":"2536572733","name":"Carol Leger","addr":"90 Contoocook Lane, Peterborough, New Hampshire","phone":"(978) 660-8558","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Friday","prefTime":"","notes":"","avgHours":4.6},{"id":"2396664789","name":"Cassandra J Trice","addr":"12 Margaret Street, Gardner, Massachusetts","phone":"+1 (508) 615-4928","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Thursday","prefTime":"","notes":"","avgHours":2.79},{"id":"7552142750","name":"Valerie D Jenkind","addr":"79 Robbe Farm Road, Peterborough, New Hampshire","phone":"(978) 877-3283","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Friday","prefTime":"","notes":"","avgHours":3.36},{"id":"4692029081","name":"Charlene Diotalevi","addr":"62 Heywood Road, Sterling, Massachusetts","phone":"(508) 259-6816","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":4.01},{"id":"7103393705","name":"Chelsea","addr":"2 Highland Drive, Peterborough, New Hampshire","phone":"(630) 865-6935","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Friday","prefTime":"","notes":"","avgHours":4.58},{"id":"9176618999","name":"Tony Pineyro","addr":"16 Sanderson Street, Leominster, Massachusetts","phone":"(978) 868-5004","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":3.6},{"id":"6752226289","name":"Tony Lombardo","addr":"142 Fitzgerald Road, Rindge, New Hampshire","phone":"(781) 910-9483","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":3.24},{"id":"3414679212","name":"Tom Montague","addr":"35 Ivy Court, Lancaster, Massachusetts","phone":"(508) 414-9639","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":2.21},{"id":"3635160539","name":"Christopher O'Leary","addr":"26 Lower River Road, New Ipswich, New Hampshire","phone":"(978) 799-7238","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Monday","prefTime":"","notes":"","avgHours":2.56},{"id":"3072721084","name":"Cibele Gray","addr":"34 Brookside Avenue, Webster, Massachusetts","phone":"+1 (978) 798-8972","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":2.6},{"id":"1798976041","name":"Cindy Dumais","addr":"377 Madison Street, Fitchburg, Massachusetts","phone":"(508) 783-9105","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Thursday","prefTime":"","notes":"","avgHours":2.5},{"id":"3600902878","name":"Tatum's Place","addr":"453 Glenallen Street, Winchendon, Massachusetts","phone":"(603) 593-2495","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Saturday","prefTime":"","notes":"","avgHours":5.44},{"id":"2444056400","name":"Cory Wilson","addr":"309 Page Hill Road, New Ipswich, New Hampshire","phone":"(603) 722-8157","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Monday","prefTime":"","notes":"","avgHours":3.8},{"id":"1469172741","name":"Cynthia Tremonte","addr":"14 Carlton Drive, Acton, Massachusetts","phone":"(973) 234-3227","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Monday","prefTime":"","notes":"","avgHours":4.71},{"id":"2949688438","name":"Tanner Schaack","addr":"60 Wilder Street, Peterborough, New Hampshire","phone":"(256) 316-0494","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Friday","prefTime":"","notes":"","avgHours":3.2},{"id":"7426838903","name":"Suzanne Barnett","addr":"101 Ridgewood Drive, Leominster, Massachusetts","phone":"(508) 272-2597","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Thursday","prefTime":"","notes":"","avgHours":4.33},{"id":"1372949852","name":"Dave Ball","addr":"76 Hemlock Drive, Fitchburg, Massachusetts","phone":"(978) 855-4002","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":2.64},{"id":"2908496286","name":"Steve Rousseau","addr":"29 Brookside Avenue, Webster, Massachusetts","phone":"","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":3.6},{"id":"7792269414","name":"Stephen & Jenilee","addr":"16 Crawford Way, Pepperell, Massachusetts","phone":"(978) 808-4755","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":4.09},{"id":"6912435151","name":"Stacie Hargis","addr":"43 Jacob Gates Road, Harvard, Massachusetts","phone":"+1 (978) 319-5933","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":4.51},{"id":"3208864010","name":"Sheri Dayton","addr":"51 Saddlebred Drive, Leominster, Massachusetts","phone":"(508) 648-2172","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Monday","prefTime":"","notes":"","avgHours":2.94},{"id":"3913998141","name":"Sharon Bernard","addr":"70 Saw Mill Pond Road, Fitchburg, Massachusetts","phone":"(508) 648-0931","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":3.15},{"id":"4619070682","name":"Serena McGovern","addr":"53 Old Jaffrey Road, Peterborough, New Hampshire","phone":"(541) 233-6159","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":5.29},{"id":"9145812548","name":"Sarah Mello","addr":"63 Cottage Street, West Brookfield, Massachusetts","phone":"(508) 769-0613","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":3.32},{"id":"6477030780","name":"Sarah Richmond","addr":"88 Grant Road, Harvard, Massachusetts","phone":"(978) 604-0976","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Friday","prefTime":"","notes":"","avgHours":4.47},{"id":"7140380099","name":"Sara Mockaitis","addr":"146 Tolman Road, Troy, New Hampshire","phone":"(215) 380-5118","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Friday","prefTime":"","notes":"","avgHours":2.94},{"id":"6700860951","name":"Sara L McNamara","addr":"172 Harvard Street, Leominster, Massachusetts","phone":"+1 (413) 575-7711","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":4.06},{"id":"7150096342","name":"Sabrina Russett","addr":"40 Bryant Road, Jaffrey, New Hampshire","phone":"(907) 251-1286","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Friday","prefTime":"","notes":"","avgHours":3.92},{"id":"4094636359","name":"Rebecca Smith-Allen","addr":"24 Chestnut Hill Road, Dublin, New Hampshire","phone":"(860) 965-6654","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":4.14},{"id":"8695544508","name":"Ray Christian","addr":"22 Old Beaver Road, New Ipswich, New Hampshire","phone":"(603) 562-0528","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Monday","prefTime":"","notes":"","avgHours":2.86},{"id":"7130695386","name":"Rachel Boyer","addr":"237 Gates Pond Road, Berlin, Massachusetts","phone":"(781) 296-4268","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Thursday","prefTime":"","notes":"","avgHours":3.73},{"id":"4641602455","name":"Peggy Kerins","addr":"148 Caspian Way, Fitchburg, Massachusetts","phone":"(630) 452-1809","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":2.83},{"id":"5175520496","name":"Monique Maillet","addr":"72 Eva Drive, Leominster, Massachusetts","phone":"(508) 380-2973","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Thursday","prefTime":"","notes":"","avgHours":3.09},{"id":"5205099413","name":"Mikella Vandyke","addr":"252 Goddard Road, Rindge, New Hampshire","phone":"(603) 831-9541","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Monday","prefTime":"","notes":"","avgHours":4.39},{"id":"6193684733","name":"Michelle Durkin","addr":"471 Leominster Road, Lunenburg, Massachusetts","phone":"(978) 407-5453","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Thursday","prefTime":"","notes":"","avgHours":3.22},{"id":"9131509597","name":"Melissa Wise","addr":"59 Penn Street, Leominster, Massachusetts","phone":"(508) 341-6856","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Thursday","prefTime":"","notes":"","avgHours":2.7},{"id":"3110576723","name":"Melanie Amichetti","addr":"28 Campbell Avenue, Leominster, Massachusetts","phone":"(978) 660-7163","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":2.61},{"id":"5625308301","name":"Meghan Guthrie","addr":"15 Munson Avenue, Shirley, Massachusetts","phone":"(508) 328-4682","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":3.37},{"id":"7598784924","name":"Maya Carter","addr":"49 Seminole Road, Acton, Massachusetts","phone":"(617) 840-5449","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":3.89},{"id":"6017962291","name":"Maryrae","addr":"357 Goodrich Street, Lunenburg, Massachusetts","phone":"(978) 660-6244","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Thursday","prefTime":"","notes":"","avgHours":4.31},{"id":"9078307878","name":"Mary Paradiso","addr":"58 Castle Road, Fitchburg, Massachusetts","phone":"(978) 855-3039","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":3.32},{"id":"5184272554","name":"Maeve D Bennett","addr":"45 Longwood Drive, Greenfield, New Hampshire","phone":"(617) 319-5680","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Monday","prefTime":"","notes":"","avgHours":4.24},{"id":"1285990235","name":"Lynn Powell","addr":"444 Goodrich Street, Lunenburg, Massachusetts","phone":"(978) 375-4665","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":4.57},{"id":"4634237959","name":"Lise Fracalossi","addr":"37 Valley Road, Lunenburg, Massachusetts","phone":"(978) 604-0783","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":5.36},{"id":"2824979936","name":"Lisa Conrad","addr":"1295 Pearl Hill Road, Fitchburg, Massachusetts","phone":"(978) 314-0916","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":3.18},{"id":"1152997909","name":"Lindsay Dana","addr":"215 Florence Street, Leominster, Massachusetts","phone":"(207) 233-2594","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Thursday","prefTime":"","notes":"","avgHours":5.66},{"id":"5636972038","name":"Lily Mueller","addr":"47 Center Bridge Road, Lancaster, Massachusetts","phone":"(312) 404-5159","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":4.52},{"id":"4471362169","name":"Leah Manoni","addr":"21 Owl Drive, New Ipswich, New Hampshire","phone":"+1 (203) 362-8768","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Friday","prefTime":"","notes":"","avgHours":4.37},{"id":"8898784682","name":"Kristen Aldrich","addr":"209 Lunenburg Street, Fitchburg, Massachusetts","phone":"(978) 906-3620","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":2.12},{"id":"3709383280","name":"Kim Dukes","addr":"6 Whitman Trail, Westminster, Massachusetts","phone":"(617) 943-8276","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":3.21},{"id":"1174384200","name":"Kelly Berojouki","addr":"39 Brierwood Drive, Fitchburg, Massachusetts","phone":"(978) 400-1262","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Thursday","prefTime":"","notes":"","avgHours":3.0},{"id":"7457015185","name":"Keith Torrey","addr":"51 Lancaster Road, Bolton, Massachusetts","phone":"(508) 439-3621","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Thursday","prefTime":"","notes":"","avgHours":5.39},{"id":"7756508556","name":"Kayla FarmHouse","addr":"188 Fitchburg Road, Townsend, Massachusetts","phone":"(978) 833-8198","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":4.8},{"id":"8045737092","name":"Katrina Eliadis","addr":"260 Glenwood Road, Rutland, Massachusetts","phone":"(774) 230-6321","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Monday","prefTime":"","notes":"","avgHours":3.39},{"id":"2280465757","name":"Keith Grimes","addr":"107 Glen Farm Road, Temple, New Hampshire","phone":"(603) 732-2484","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Monday","prefTime":"","notes":"","avgHours":3.83},{"id":"5980385202","name":"Deb Terrel","addr":"108 Posco Avenue, Leominster, Massachusetts","phone":"(978) 549-7771","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":5.46},{"id":"7498841517","name":"Debra Napsey","addr":"101 Taylor Road, Peterborough, New Hampshire","phone":"(603) 547-5039","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":3.03},{"id":"2381035991","name":"Diane Cherwin","addr":"88 Depot Road, Hancock, New Hampshire","phone":"(603) 714-0784","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Monday","prefTime":"","notes":"","avgHours":2.8},{"id":"3758281529","name":"Caitlin Burke","addr":"170 Warren Road, Townsend, Massachusetts","phone":"(978) 870-4263","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Friday","prefTime":"","notes":"","avgHours":6.16},{"id":"3967235306","name":"Donna Garven","addr":"137 Bridle Cross Road, Fitchburg, Massachusetts","phone":"(508) 494-6179","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":2.5},{"id":"7545388347","name":"Dr Iyer","addr":"26 Dimassa Drive, Leominster, Massachusetts","phone":"(760) 470-6762","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Thursday","prefTime":"","notes":"","avgHours":4.04},{"id":"9128479185","name":"Earnie Wilbon","addr":"Rosewood Drive, Leominster, Massachusetts","phone":"(978) 973-5989","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Thursday","prefTime":"","notes":"","avgHours":3.49},{"id":"6310943145","name":"Amanda Krumsiek","addr":"45 Howard Street, Lunenburg, Massachusetts","phone":"(508) 574-9663","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":3.19},{"id":"7087326016","name":"Efe Yardimci","addr":"12 Meadowbrook Road, Lincoln, Massachusetts","phone":"(617) 470-6175","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Thursday","prefTime":"","notes":"","avgHours":7.02},{"id":"2247370334","name":"Ellen FitzPatrick","addr":"801 Autumn Ridge Drive, Ayer, Massachusetts","phone":"(978) 273-4204","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Friday","prefTime":"","notes":"","avgHours":4.14},{"id":"2251571248","name":"Emmaline Owens","addr":"13 Nathan Pratt Drive, Concord, Massachusetts","phone":"(407) 766-8551","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":3.76},{"id":"3635687439","name":"Erica Kidder","addr":"182 North Street, Leominster, Massachusetts","phone":"(978) 751-1120","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Thursday","prefTime":"","notes":"","avgHours":3.7},{"id":"1718396022","name":"Erica Sunkenberg","addr":"57 Cross Road, Lunenburg, Massachusetts","phone":"(978) 408-7543","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Thursday","prefTime":"","notes":"","avgHours":4.16},{"id":"2931489298","name":"Erika Sullivan","addr":"375 Middle Hancock Road, Peterborough, New Hampshire","phone":"(603) 547-0074","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":3.36},{"id":"6520626356","name":"Erin Shanley","addr":"301 Pierce Street, Leominster, Massachusetts","phone":"(978) 877-3861","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":3.75},{"id":"8657491977","name":"Gayle Cefole","addr":"32 Abel Road, Rindge, New Hampshire","phone":"(978) 855-5649","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":3.21},{"id":"8837332109","name":"Georgette Carlson","addr":"1155 Main Street, Ashby, Massachusetts","phone":"(978) 325-0822","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Monday","prefTime":"","notes":"","avgHours":3.15},{"id":"5334402383","name":"Gerry","addr":"1102 Forest Road, Greenfield, New Hampshire","phone":"(603) 831-9269","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Friday","prefTime":"","notes":"","avgHours":2.47},{"id":"1721313600","name":"Gerry","addr":"210 Gulf Road, Peterborough, New Hampshire","phone":"(603) 831-9269","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Friday","prefTime":"","notes":"","avgHours":2.47},{"id":"7145025134","name":"Gillian Dierauf","addr":"64 Francestown Road, Greenfield, New Hampshire","phone":"(603) 547-5487","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Friday","prefTime":"","notes":"","avgHours":3.02},{"id":"7535300978","name":"Graeme L Calloway","addr":"17 Oakland Street, Wellesley, Massachusetts","phone":"(802) 356-1903","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Thursday","prefTime":"","notes":"","avgHours":4.84},{"id":"4621564357","name":"Hannah Basnett","addr":"322 Flat Hill Road, Lunenburg, Massachusetts","phone":"(978) 815-2332","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Thursday","prefTime":"","notes":"","avgHours":4.21},{"id":"1419792276","name":"Heather McClusky","addr":"244 Sand Hill Road, Peterborough, New Hampshire","phone":"(603) 547-5780","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Thursday","prefTime":"","notes":"","avgHours":4.47},{"id":"2702536756","name":"Hillary Irwin","addr":"21 Chestnut Hill Road, Dublin, New Hampshire","phone":"(617) 716-9848","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Friday","prefTime":"","notes":"","avgHours":3.8},{"id":"7871801171","name":"James Morel","addr":"18 Sycamore Drive, Leominster, Massachusetts","phone":"(310) 770-4159","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Thursday","prefTime":"","notes":"","avgHours":4.18},{"id":"3324007960","name":"Jennie Hakala","addr":"562 Middle Hancock Road, Peterborough, New Hampshire","phone":"(603) 630-7553","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Friday","prefTime":"","notes":"","avgHours":6.27},{"id":"8280635714","name":"Jennifer O Neil","addr":"54 Green Street, Leominster, Massachusetts","phone":"(978) 602-2932","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":2.15},{"id":"3575145352","name":"Jesse James","addr":"6 Warner Road, Townsend, Massachusetts","phone":"(978) 836-6196","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":1.92},{"id":"1323821998","name":"Jessica Quinn","addr":"6 Brennan-Woods Road, Hancock, New Hampshire","phone":"(347) 821-6534","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":4.22},{"id":"1265118252","name":"Joanna Karamanou","addr":"9 Cross Street, Fitchburg, Massachusetts","phone":"(404) 610-1449","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":3.03},{"id":"3547657473","name":"John White","addr":"328 Henshaw Street, Leicester, Massachusetts","phone":"(631) 834-5460","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Monday","prefTime":"","notes":"","avgHours":3.46},{"id":"3439315952","name":"Judy Mc Guan","addr":"37 Baker Lane, Gardner, Massachusetts","phone":"(978) 410-5564","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Thursday","prefTime":"","notes":"","avgHours":2.94},{"id":"2119481703","name":"Julia Glendon","addr":"334 Townsend Harbor Road, Lunenburg, Massachusetts","phone":"(978) 869-5066","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","notes":"","avgHours":2.78,"prefDay":"Wednesday"},{"id":"5349312087","name":"Kara J Afshar","addr":"92 High Ridge Road, Dublin, New Hampshire","phone":"(617) 943-0866","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Friday","prefTime":"","notes":"","avgHours":4.01},{"id":"3720137160","name":"Kate Bergquist","addr":"661 West Road, Temple, New Hampshire","phone":"(978) 835-0386","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Friday","prefTime":"","notes":"","avgHours":3.48},{"id":"3437546213","name":"Kathy Manfre","addr":"17 Arundel Road, Peterborough, New Hampshire","phone":"(603) 620-3612","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Friday","prefTime":"","notes":"","avgHours":3.17},{"id":"8495721158","name":"Katie Deitering","addr":"224 Bancroft Road, Rindge, New Hampshire","phone":"(918) 261-8603","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Friday","prefTime":"","notes":"","avgHours":3.48},{"id":"5257153284","name":"Katie Galvin","addr":"205 Hubbard Pond Road, New Ipswich, New Hampshire","phone":"(603) 831-4188","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Friday","prefTime":"","notes":"","avgHours":3.83},{"id":"6865492760","name":"Sonja Catano","addr":"26 Scarlett Street, West Boylston, Massachusetts","phone":"(774) 329-0803","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":7.42},{"id":"6613059117","name":"Claire Katt","addr":"16 Camp Rockne Lane, Dublin, New Hampshire","phone":"(207) 756-0662","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Monday","prefTime":"","notes":"","avgHours":8.13},{"id":"3817786448","name":"Emma Adams","addr":"15 Orchard Hill Road, Peterborough, New Hampshire","phone":"(603) 547-0126","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Friday","prefTime":"","notes":"","avgHours":3.26},{"id":"7790556430","name":"Maria Brucculeri","addr":"26 Sam Cobb Lane, Princeton, Massachusetts","phone":"(508) 523-3053","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Monday","prefTime":"","notes":"","avgHours":6.77},{"id":"5187506257","name":"Marissa Saveall","addr":"132 Candlelight Road, Rindge, New Hampshire","phone":"(603) 573-5511","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":"","avgHours":0},{"id":"8156449447","name":"Bethany Pyhala","addr":"548 Main Street, Rindge, New Hampshire","phone":"(603) 593-9980","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":"","avgHours":0},{"id":"6493470545","name":"Chris Linton","addr":"109 Gardner Road, Gardner, Massachusetts","phone":"(978) 990-0316","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Tuesday","prefTime":"","notes":"","avgHours":3.17},{"id":"7077125904","name":"Miguel De La Cruz","addr":"119 Woodland Street, Fitchburg, Massachusetts","phone":"(781)745-3350","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":"","avgHours":0},{"id":"8872704452","name":"Kerri Mulligan-O'Neill","addr":"295 Goodale St, West Boylston, Massachusetts","phone":"(631) 275-4604","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":"","avgHours":0},{"id":"4145572740","name":"Aaron Smith-Walter","addr":"6 Central Street, Peterborough, New Hampshire","phone":"(540) 246-2146","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":"","avgHours":0},{"id":"5553452939","name":"Afia Obeng","addr":"35 North Meadow Road, Leominster, Massachusetts","phone":"(929) 235-2186","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":"","avgHours":0},{"id":"1432669711","name":"Akmaral Noecker","addr":"30 Fire Ln 3, Dublin, New Hampshire","phone":"(617) 504-0036","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Saturday","prefTime":"","notes":"","avgHours":5.08},{"id":"2231339086","name":"Alexis Chitwood","addr":"121 Mountain View Drive, New Ipswich, New Hampshire","phone":"(603) 465-1135","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":"","avgHours":0},{"id":"8113243917","name":"Alexis Murray","addr":"201 Spring Hill Road, Sharon, New Hampshire","phone":"(312) 933-6760","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":"","avgHours":0},{"id":"2356215505","name":"Ali Odom","addr":"451 Main Street, Acton, Massachusetts","phone":"(202) 557-4284","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"Wednesday","prefTime":"","notes":"","avgHours":3.21},{"id":"8747141486","name":"Alice Lombardi","addr":"100 Avery Heights Drive, Holden, Massachusetts","phone":"(508) 353-2848","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":"","avgHours":0},{"id":"4821514042","name":"Alicia Milliken","addr":"24 Acorn Avenue, Fitchburg, Massachusetts","phone":"(978) 895-0499","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":"","avgHours":0},{"id":"8334931494","name":"Alissa Younkin","addr":"179 Winchendon Road, Ashburnham, Massachusetts","phone":"(978) 413-0308","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":"","avgHours":0},{"id":"2630039612","name":"Alyssa King","addr":"7 Brooks Avenue, Westminster, Massachusetts","phone":"(781) 491-4621","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":"","avgHours":0},{"id":"4410119502","name":"Alyssa Mitchell","addr":"232 Ayer Road, Harvard, Massachusetts","phone":"(339) 227-0680","dur":3,"type":"Standard Cleaning","freq":"Biweekly","cleaner":"","prefDay":"","prefTime":"","notes":"","avgHours":0}];
 
 function getClients(){try{return JSON.parse(localStorage.getItem(SK))||null;}catch{return null;}}
 function saveClients(a){localStorage.setItem(SK,JSON.stringify(a));}
@@ -298,7 +302,26 @@ function fT(m){const h=Math.floor(m/60)%24,mn=m%60;return `${String(h).padStart(
 
 function initData(){
   let c=getClients();
-  if(!c){saveClients(IMPORTED);c=IMPORTED;}
+  if(!c){
+    // First time: inject avgHours and prefDay from historical data into IMPORTED
+    saveClients(IMPORTED);
+    c=IMPORTED;
+  } else {
+    // Merge: update avgHours and prefDay for existing clients from IMPORTED data
+    // (only if not manually overridden)
+    const importedMap={};
+    IMPORTED.forEach(imp=>importedMap[imp.id]=imp);
+    let updated=false;
+    c.forEach(client=>{
+      const imp=importedMap[client.id];
+      if(imp){
+        if(imp.avgHours&&!client.avgHours){client.avgHours=imp.avgHours;updated=true;}
+        if(imp.avgHours&&client.avgHours!==imp.avgHours&&!client._avgManual){client.avgHours=imp.avgHours;updated=true;}
+        if(imp.prefDay&&!client.prefDay){client.prefDay=imp.prefDay;updated=true;}
+      }
+    });
+    if(updated)saveClients(c);
+  }
   document.getElementById('cnt').textContent=`(${c.length})`;
 }
 
@@ -307,7 +330,9 @@ function buildOptions(excludeIds=[]){
   let opts='<option value="">— Select client —</option>';
   all.forEach(c=>{
     const dis=excludeIds.includes(c.id)?'disabled':'';
-    opts+=`<option value="${c.id}" ${dis}>${c.name} · ${c.addr.split(',').slice(1,2).join('').trim()}</option>`;
+    const dayHint=c.prefDay?` [${c.prefDay.slice(0,3)}]`:'';
+    const avgHint=c.avgHours?` ~${c.avgHours}h`:'';
+    opts+=`<option value="${c.id}" ${dis}>${c.name} · ${c.addr.split(',').slice(1,2).join('').trim()}${dayHint}${avgHint}</option>`;
   });
   return opts;
 }
@@ -327,7 +352,9 @@ function refreshAllOptions(){
     all.forEach(c=>{
       const dis=others.includes(c.id)?'disabled':'';
       const sel2=c.id===own?'selected':'';
-      opts+=`<option value="${c.id}" ${sel2} ${dis}>${c.name} · ${c.addr.split(',').slice(1,2).join('').trim()}</option>`;
+      const dayHint=c.prefDay?` [${c.prefDay.slice(0,3)}]`:'';
+      const avgHint=c.avgHours?` ~${c.avgHours}h`:'';
+      opts+=`<option value="${c.id}" ${sel2} ${dis}>${c.name} · ${c.addr.split(',').slice(1,2).join('').trim()}${dayHint}${avgHint}</option>`;
     });
     sel.innerHTML=opts;
   });
@@ -337,58 +364,65 @@ function onSlotChange(sel){
   const id=sel.value;
   const slotEl=sel.closest('.slot');
   const info=slotEl.querySelector('.slot-info');
-  const durSel=slotEl.querySelector('.slot-dur');
-  if(!id){info.classList.remove('show');refreshAllOptions();return;}
+  const durInput=slotEl.querySelector('.slot-dur');
+  const badgeArea=slotEl.querySelector('.slot-badges');
+
+  if(!id){info.classList.remove('show');if(badgeArea)badgeArea.innerHTML='';refreshAllOptions();return;}
   const all=getClients()||[];
   const c=all.find(x=>x.id===id);
   if(!c){info.classList.remove('show');refreshAllOptions();return;}
-  durSel.value=c.dur;
-  const prefs=[c.cleaner,c.prefDay,c.prefTime].filter(Boolean).map(t=>`<span class="pref-pill">${t}</span>`).join('');
-  
+
+  // Auto-fill duration from avgHours (historical data)
+  if(c.avgHours&&c.avgHours>0){
+    durInput.value=c.avgHours;
+  } else {
+    durInput.value=c.dur||3;
+  }
+
+  // Show badges: preferred day + avg hours
+  if(badgeArea){
+    let badges='';
+    if(c.prefDay) badges+=`<span class="slot-pref-badge">📅 ${c.prefDay}</span>`;
+    if(c.avgHours) badges+=`<span class="slot-avg-badge">⏱ Avg ${c.avgHours}h</span>`;
+    badgeArea.innerHTML=badges;
+  }
+
+  const prefs=[c.cleaner,c.prefTime].filter(Boolean).map(t=>`<span class="pref-pill">${t}</span>`).join('');
+  const avgBadge=c.avgHours?`<span class="avg-pill">📊 Histórico: ${c.avgHours}h avg</span>`:'';
+  const dayBadge=c.prefDay?`<span class="pref-pill">📅 ${c.prefDay}</span>`:'';
+
   // Rate alert logic
   const idealRates={'Weekly':55,'Biweekly':57,'Monthly':60,'Every 3 weeks':63,'Every 6 weeks':63,'Every 12 weeks':63,'One-time':63};
   const idealRate=idealRates[c.freq]||57;
   const cleaning=parseFloat(c.cleaning)||0;
-  const durHrs=parseFloat(slotEl.querySelector('.slot-dur').value)||c.dur||3;
+  const durHrs=parseFloat(durInput.value)||c.dur||3;
   let alertHTML='';
   if(cleaning>0){
     const actualRate=cleaning/durHrs;
     const maxHours=cleaning/idealRate;
     const isBelow=actualRate<idealRate;
     const sqftRed=parseFloat(c.sqft)||0;
-    const sqftLineRed=sqftRed>0?`<div style="font-size:11px;color:#A32D2D;margin-top:2px;">Cost/sqft: <strong>$${(cleaning/sqftRed).toFixed(4)}</strong> · ${sqftRed.toLocaleString()} sqft</div>`:'';
+    const sqftLine=sqftRed>0?`<div style="font-size:11px;color:#A32D2D;margin-top:2px;">Cost/sqft: <strong>$${(cleaning/sqftRed).toFixed(4)}</strong> · ${sqftRed.toLocaleString()} sqft</div>`:'';
     if(isBelow){
       alertHTML=`<div style="margin-top:8px;background:#FCEBEB;border:1px solid #F7C1C1;border-radius:8px;padding:8px 10px;">
         <div style="font-size:11px;font-weight:700;color:#A32D2D;">⚠ Below ideal rate</div>
-        <div style="font-size:11px;color:#A32D2D;margin-top:2px;">
-          Current: <strong>$${actualRate.toFixed(2)}/hr</strong> · Ideal: <strong>$${idealRate}/hr</strong> (${c.freq||'Biweekly'})
-        </div>
-        <div style="font-size:11px;color:#A32D2D;margin-top:2px;">
-          Max time at $${idealRate}/hr: <strong>${Math.floor(maxHours)}h ${Math.round((maxHours%1)*60)}min</strong>
-        </div>
-        ${sqftLineRed}
-      </div>`;
+        <div style="font-size:11px;color:#A32D2D;margin-top:2px;">Current: <strong>$${actualRate.toFixed(2)}/hr</strong> · Ideal: <strong>$${idealRate}/hr</strong> (${c.freq||'Biweekly'})</div>
+        <div style="font-size:11px;color:#A32D2D;margin-top:2px;">Max time at $${idealRate}/hr: <strong>${Math.floor(maxHours)}h ${Math.round((maxHours%1)*60)}min</strong></div>
+        ${sqftLine}</div>`;
     } else {
-      const buffer=actualRate-idealRate;
       const extraMins=Math.floor(((cleaning-(idealRate*durHrs))/idealRate)*60);
       alertHTML=`<div style="margin-top:8px;background:#CFFFD7;border:1px solid #9DFCB1;border-radius:8px;padding:8px 10px;">
         <div style="font-size:11px;font-weight:700;color:#1A6B2F;">✓ Good rate</div>
-        <div style="font-size:11px;color:#1A6B2F;margin-top:2px;">
-          Current: <strong>$${actualRate.toFixed(2)}/hr</strong> · Ideal: <strong>$${idealRate}/hr</strong>
-        </div>
-        <div style="font-size:11px;color:#1A6B2F;margin-top:2px;">
-          Can add up to <strong>${extraMins} min extra</strong> and stay above ideal
-        </div>
-      </div>`;
+        <div style="font-size:11px;color:#1A6B2F;margin-top:2px;">Current: <strong>$${actualRate.toFixed(2)}/hr</strong> · Ideal: <strong>$${idealRate}/hr</strong></div>
+        <div style="font-size:11px;color:#1A6B2F;margin-top:2px;">Can add up to <strong>${extraMins} min extra</strong> and stay above ideal</div></div>`;
     }
   } else {
     alertHTML=`<div style="margin-top:8px;background:#FFF0F8;border:1px solid #FDE8F3;border-radius:8px;padding:8px 10px;">
-      <div style="font-size:11px;color:#AD1E73;">Add Cleaning $ in client profile to see rate alert</div>
-    </div>`;
+      <div style="font-size:11px;color:#AD1E73;">Add Cleaning $ in client profile to see rate alert</div></div>`;
   }
 
   info.classList.add('show');
-  info.innerHTML=`<strong>${c.addr}</strong><br>${c.freq}${prefs?'<br>'+prefs:''}${c.notes?`<br><em style="color:#999">${c.notes}</em>`:''}${alertHTML}`;
+  info.innerHTML=`<strong>${c.addr}</strong><br>${c.freq} ${dayBadge}${avgBadge}${prefs?'<br>'+prefs:''}${c.notes?`<br><em style="color:#999">${c.notes}</em>`:''}${alertHTML}`;
   refreshAllOptions();
 }
 
@@ -404,6 +438,7 @@ function addSlot(){
     <div class="slot-header">
       <div class="slot-num" style="background:${col};">${n}</div>
       <span class="slot-label">Client ${n}</span>
+      <div class="slot-badges" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
     </div>
     <select class="slot-select" data-slot="${n}" onchange="onSlotChange(this)">${buildOptions(getSelectedIds(n))}</select>
     <div class="dur-row">
@@ -463,23 +498,14 @@ async function getRealDist(a1,a2,key){
     await loadGoogleMaps(key);
     return new Promise((resolve)=>{
       const svc=new google.maps.DistanceMatrixService();
-      svc.getDistanceMatrix({
-        origins:[a1],
-        destinations:[a2],
-        travelMode:google.maps.TravelMode.DRIVING,
-        unitSystem:google.maps.UnitSystem.IMPERIAL
-      },(res,status)=>{
+      svc.getDistanceMatrix({origins:[a1],destinations:[a2],travelMode:google.maps.TravelMode.DRIVING,unitSystem:google.maps.UnitSystem.IMPERIAL},(res,status)=>{
         if(status==='OK'&&res.rows[0].elements[0].status==='OK'){
           const el=res.rows[0].elements[0];
           resolve({mi:parseFloat((el.distance.value/1609.34).toFixed(1)),mins:Math.ceil(el.duration.value/60),real:true});
-        } else {
-          resolve({mi:8,mins:20,real:false});
-        }
+        } else {resolve({mi:8,mins:20,real:false});}
       });
     });
-  }catch(e){
-    return{mi:8,mins:20,real:false};
-  }
+  }catch(e){return{mi:8,mins:20,real:false};}
 }
 
 async function calcRoute(){
@@ -495,16 +521,14 @@ async function calcRoute(){
   const apiKey=getApiKey();
   if(!apiKey){alert('Please enter your Google Maps API Key above first.');return;}
   const all=getClients()||[];
-  const clients=selected.map(s=>({...all.find(c=>c.id===s.id),dur:s.dur})).filter(Boolean);
+  const clients=selected.map(s=>({...all.find(c=>c.id===s.id),dur:s.dur,extra:s.extra})).filter(Boolean);
   const[sh,sm]=(document.getElementById('start-time').value||'08:00').split(':').map(Number);
   let cursor=sh*60+sm;
   const addBreak=document.getElementById('break-cb').checked;
   document.getElementById('load-msg').style.display='block';
   document.getElementById('result-block').style.display='none';
   const travels=[];
-  for(let i=0;i<clients.length-1;i++){
-    travels.push(await getRealDist(clients[i].addr,clients[i+1].addr,apiKey));
-  }
+  for(let i=0;i<clients.length-1;i++){travels.push(await getRealDist(clients[i].addr,clients[i+1].addr,apiKey));}
   document.getElementById('load-msg').style.display='none';
   const events=[];let totalMi=0;
   clients.forEach((c,i)=>{
@@ -529,7 +553,10 @@ async function calcRoute(){
   const tl=document.getElementById('timeline');tl.innerHTML='';
   events.forEach(ev=>{
     const item=document.createElement('div');item.className='ti';
-    if(ev.type==='start')item.innerHTML=`<div class="td" style="background:${ev.dot};"></div><div class="tt">${fT(ev.time)} <span class="tag ti-info">Start</span></div><div class="ts">${ev.c.name}${ev.c.cleaner?' · '+ev.c.cleaner:''}${ev.c.products?' · <span style="color:#6ED386;font-size:10px;">'+ev.c.products+'</span>':''}</div><div class="tx">${ev.c.addr} · ${dL(ev.c.dur)}${ev.c.extra>0?' <span class="tag" style="background:#FDE8F3;color:#AD1E73;">+'+dL(ev.c.extra)+' extra</span>':''}</div>`;
+    if(ev.type==='start'){
+      const avgNote=ev.c.avgHours?`<span style="font-size:10px;color:#5B21B6;background:#EDE9FE;padding:1px 6px;border-radius:99px;margin-left:4px;">avg ${ev.c.avgHours}h</span>`:'';
+      item.innerHTML=`<div class="td" style="background:${ev.dot};"></div><div class="tt">${fT(ev.time)} <span class="tag ti-info">Start</span></div><div class="ts">${ev.c.name}${ev.c.cleaner?' · '+ev.c.cleaner:''}${ev.c.products?' · <span style="color:#6ED386;font-size:10px;">'+ev.c.products+'</span>':''}</div><div class="tx">${ev.c.addr} · ${dL(ev.c.dur)}${ev.c.extra>0?' <span class="tag" style="background:#FDE8F3;color:#AD1E73;">+'+dL(ev.c.extra)+' extra</span>':''}${avgNote}</div>`;
+    }
     else if(ev.type==='end')item.innerHTML=`<div class="td" style="background:#ddd;"></div><div class="tt">${fT(ev.time)} <span class="tag ti-ok">End</span></div><div class="ts">${ev.name}</div>`;
     else if(ev.type==='break')item.innerHTML=`<div class="td" style="background:#888;"></div><div class="tt">${fT(ev.time)} <span class="tag ti-gray">30 min break</span></div>`;
     else if(ev.type==='travel')item.innerHTML=`<div class="td" style="background:#ddd;border:2px solid #888;"></div><div class="tt">${fT(ev.time)} <span class="tag ti-warn">Travel</span>${ev.real?'<span class="tag ti-real">Google Maps</span>':''}</div><div class="ts">${ev.mi} mi · ${ev.mins} min → ${ev.to}</div>`;
@@ -560,6 +587,8 @@ function renderCList(){
   filtered.forEach((c,idx)=>{
     const col=AVCOLORS[idx%AVCOLORS.length];
     const ini=c.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const avgBadge=c.avgHours?`<span style="font-size:10px;background:#EDE9FE;color:#5B21B6;padding:2px 7px;border-radius:99px;font-weight:600;">⏱ ${c.avgHours}h avg</span>`:'';
+    const dayBadge=c.prefDay?`<span class="pref-pill">📅 ${c.prefDay}</span>`:'';
     const div=document.createElement('div');div.className='client-card';
     div.innerHTML=`
       <div class="avatar" style="background:${col.bg};color:${col.cl};">${ini}</div>
@@ -567,7 +596,7 @@ function renderCList(){
         <div class="client-name">${c.name}</div>
         <div class="client-addr">${c.addr}</div>
         <div class="client-meta">${dL(c.dur)} · ${c.type}${c.products?' · '+c.products:''} · ${c.freq}${c.phone?' · '+c.phone:''}</div>
-        <div style="margin-top:4px;">${[c.cleaner,c.prefDay,c.prefTime].filter(Boolean).map(t=>`<span class="pref-pill">${t}</span>`).join('')}${c.notes?`<span style="font-size:10px;color:#999;font-style:italic;"> ${c.notes}</span>`:''}</div>
+        <div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap;">${dayBadge}${avgBadge}${[c.cleaner,c.prefTime].filter(Boolean).map(t=>`<span class="pref-pill">${t}</span>`).join('')}${c.notes?`<span style="font-size:10px;color:#999;font-style:italic;"> ${c.notes}</span>`:''}</div>
       </div>
       <div style="display:flex;gap:4px;align-items:flex-start;">
         <button class="btn-edit" onclick="openModal('${c.id}')">Edit</button>
@@ -582,7 +611,17 @@ function openModal(id){
   const all=getClients()||[];const c=all.find(x=>x.id===id);if(!c)return;
   editId=id;
   document.getElementById('modal-title').textContent=c.name;
-  document.getElementById('m-dur').value=c.dur;
+  // Show historical data badge in modal
+  const histEl=document.getElementById('modal-hist-info');
+  if(c.avgHours||c.prefDay){
+    histEl.style.display='block';
+    histEl.innerHTML=`<div class="hist-badge">📊 Histórico</div> `+
+      (c.avgHours?`<span class="avg-pill" style="margin-right:4px;">⏱ Avg ${c.avgHours}h</span>`:'') +
+      (c.prefDay?`<span class="pref-pill">📅 ${c.prefDay}</span>`:'');
+  } else {
+    histEl.style.display='none';
+  }
+  document.getElementById('m-dur').value=c.avgHours||c.dur;
   document.getElementById('m-type').value=c.type;
   document.getElementById('m-cleaner').value=c.cleaner||'';
   document.getElementById('m-day').value=c.prefDay||'';
@@ -616,13 +655,10 @@ function saveModal(){
   all[idx].diff=document.getElementById('m-diff').value;
   all[idx].idealcleaning=document.getElementById('m-idealcleaning').value;
   saveClients(all);closeModal();renderCList();refreshAllOptions();
-  // Refresh all active slots so rate alerts update immediately
-  document.querySelectorAll('.slot-select').forEach(sel=>{
-    if(sel.value) onSlotChange(sel);
-  });
+  document.querySelectorAll('.slot-select').forEach(sel=>{if(sel.value)onSlotChange(sel);});
 }
 function delClient(id){
-  if(!confirm('Remove este cliente?'))return;
+  if(!confirm('Remove this client?'))return;
   const all=(getClients()||[]).filter(c=>c.id!==id);
   saveClients(all);renderCList();
   document.getElementById('cnt').textContent=`(${all.length})`;
@@ -636,7 +672,6 @@ function saveNewClient(){
     phone:document.getElementById('n-phone').value.trim(),
     dur:parseFloat(document.getElementById('n-dur').value),
     type:document.getElementById('n-type').value,
-    products:document.getElementById('n-products').value,
     freq:document.getElementById('n-freq').value,
     cleaner:document.getElementById('n-cleaner').value,
     prefDay:document.getElementById('n-day').value,
@@ -647,7 +682,8 @@ function saveNewClient(){
     pricehr:document.getElementById('n-pricehr').value||'',
     idealhr:document.getElementById('n-idealhr').value||'',
     diff:document.getElementById('n-diff').value||'',
-    idealcleaning:document.getElementById('n-idealcleaning').value||''
+    idealcleaning:document.getElementById('n-idealcleaning').value||'',
+    avgHours:0
   });
   saveClients(all);
   ['n-name','n-addr','n-phone','n-notes'].forEach(id=>document.getElementById(id).value='');
@@ -655,39 +691,24 @@ function saveNewClient(){
   document.getElementById('cnt').textContent=`(${all.length})`;
   setTimeout(()=>{document.getElementById('save-msg').textContent='';},3000);
 }
-
 function calcPriceHr(prefix){
   const cleaning=parseFloat(document.getElementById(prefix+'-cleaning').value)||0;
   const dur=parseFloat(document.getElementById(prefix+'-dur').value)||0;
   const priceHrEl=document.getElementById(prefix+'-pricehr');
-  if(cleaning>0&&dur>0){
-    priceHrEl.value=(cleaning/dur).toFixed(2);
-    priceHrEl.style.background='#CFFFD7';
-  } else {
-    priceHrEl.style.background='';
-  }
+  if(cleaning>0&&dur>0){priceHrEl.value=(cleaning/dur).toFixed(2);priceHrEl.style.background='#CFFFD7';}
+  else{priceHrEl.style.background='';}
 }
-
 function refreshRateAlert(durSel){
   const slotEl=durSel.closest('.slot');
   const clientSel=slotEl.querySelector('.slot-select');
-  if(clientSel&&clientSel.value) onSlotChange(clientSel);
+  if(clientSel&&clientSel.value)onSlotChange(clientSel);
 }
-
 function toggleScorecard(){
   const block=document.getElementById('scorecard-block');
   const btn=document.getElementById('scorecard-toggle');
   if(block.style.display==='none'){block.style.display='block';btn.textContent='Hide Scorecard';}
   else{block.style.display='none';btn.textContent='Show Scorecard';}
 }
-
-function fmt(val,prefix='$'){
-  if(!val&&val!==0)return '<span style="color:#ccc;">—</span>';
-  const n=parseFloat(val);
-  if(isNaN(n))return '<span style="color:#ccc;">—</span>';
-  return prefix+(n>=0?'':'-')+Math.abs(n).toFixed(2);
-}
-
 function renderScorecard(clients){
   const cont=document.getElementById('scorecard-content');
   const SLOT_COLORS_SC=['#E53093','#AD1E73','#6ED386'];
@@ -704,30 +725,16 @@ function renderScorecard(clients){
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
         <div style="width:10px;height:10px;border-radius:50%;background:${col};flex-shrink:0;"></div>
         <span style="font-size:13px;font-weight:600;color:#1a1a1a;">${c.name}</span>
+        ${c.avgHours?`<span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:2px 7px;border-radius:99px;font-weight:600;">⏱ ${c.avgHours}h avg</span>`:''}
         ${c.sqft?`<span style="font-size:11px;color:#888;margin-left:auto;">${parseInt(c.sqft).toLocaleString()} sqft</span>`:''}
       </div>
       ${!hasData?'<p style="font-size:12px;color:#bbb;font-style:italic;">No scorecard data — edit client to add.</p>':`
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
-        <div style="background:#FFF7FB;border-radius:8px;padding:8px 10px;">
-          <div style="font-size:10px;color:#888;">Cleaning $</div>
-          <div style="font-size:15px;font-weight:600;color:#1a1a1a;">${c.cleaning?'$'+parseFloat(c.cleaning).toFixed(2):'—'}</div>
-        </div>
-        <div style="background:#FFF7FB;border-radius:8px;padding:8px 10px;">
-          <div style="font-size:10px;color:#888;">Price/Hour</div>
-          <div style="font-size:15px;font-weight:600;color:#1a1a1a;">${c.pricehr?'$'+parseFloat(c.pricehr).toFixed(2):'—'}</div>
-        </div>
-        <div style="background:#FFF7FB;border-radius:8px;padding:8px 10px;">
-          <div style="font-size:10px;color:#888;">Ideal/Hour $</div>
-          <div style="font-size:15px;font-weight:600;color:#1a1a1a;">${c.idealhr?'$'+parseFloat(c.idealhr).toFixed(2):'—'}</div>
-        </div>
-        <div style="background:#FFF7FB;border-radius:8px;padding:8px 10px;">
-          <div style="font-size:10px;color:#888;">$ Ideal/Cleaning</div>
-          <div style="font-size:15px;font-weight:600;color:#1a1a1a;">${c.idealcleaning?'$'+parseFloat(c.idealcleaning).toFixed(2):'—'}</div>
-        </div>
-        <div style="background:${diffBg};border-radius:8px;padding:8px 10px;grid-column:span 2;">
-          <div style="font-size:10px;color:#888;">Diferença $</div>
-          <div style="font-size:15px;font-weight:600;color:${diffColor};">${c.diff?(diff>=0?'+':'')+parseFloat(c.diff).toFixed(2):'—'}</div>
-        </div>
+        <div style="background:#FFF7FB;border-radius:8px;padding:8px 10px;"><div style="font-size:10px;color:#888;">Cleaning $</div><div style="font-size:15px;font-weight:600;color:#1a1a1a;">${c.cleaning?'$'+parseFloat(c.cleaning).toFixed(2):'—'}</div></div>
+        <div style="background:#FFF7FB;border-radius:8px;padding:8px 10px;"><div style="font-size:10px;color:#888;">Price/Hour</div><div style="font-size:15px;font-weight:600;color:#1a1a1a;">${c.pricehr?'$'+parseFloat(c.pricehr).toFixed(2):'—'}</div></div>
+        <div style="background:#FFF7FB;border-radius:8px;padding:8px 10px;"><div style="font-size:10px;color:#888;">Ideal/Hour $</div><div style="font-size:15px;font-weight:600;color:#1a1a1a;">${c.idealhr?'$'+parseFloat(c.idealhr).toFixed(2):'—'}</div></div>
+        <div style="background:#FFF7FB;border-radius:8px;padding:8px 10px;"><div style="font-size:10px;color:#888;">$ Ideal/Cleaning</div><div style="font-size:15px;font-weight:600;color:#1a1a1a;">${c.idealcleaning?'$'+parseFloat(c.idealcleaning).toFixed(2):'—'}</div></div>
+        <div style="background:${diffBg};border-radius:8px;padding:8px 10px;grid-column:span 2;"><div style="font-size:10px;color:#888;">Diferença $</div><div style="font-size:15px;font-weight:600;color:${diffColor};">${c.diff?(diff>=0?'+':'')+parseFloat(c.diff).toFixed(2):'—'}</div></div>
       </div>`}
     `;
     cont.appendChild(card);
@@ -739,7 +746,6 @@ const PASS_KEY='simplify_app_auth';
 function checkPass(){
   const input=document.getElementById('lock-input').value;
   const error=document.getElementById('lock-error');
-  // SHA-simple check — password is: Simplify2025!
   if(input==='Simplify2025!'){
     localStorage.setItem(PASS_KEY,'1');
     document.getElementById('lock-screen').style.display='none';
@@ -751,7 +757,6 @@ function checkPass(){
     document.getElementById('lock-input').focus();
   }
 }
-// Check if already authenticated
 if(localStorage.getItem(PASS_KEY)==='1'){
   document.getElementById('lock-screen').style.display='none';
   document.getElementById('main-app').style.display='block';
