@@ -711,14 +711,30 @@ function toggleScorecard(){
   if(block.style.display==='none'){block.style.display='block';btn.textContent='Hide Scorecard';}
   else{block.style.display='none';btn.textContent='Show Scorecard';}
 }
+function getIdealRate(freq){
+  if(!freq)return 57;
+  const f=freq.toLowerCase().trim();
+  if(f==='weekly')return 55;
+  if(f==='biweekly'||f==='every 2 weeks')return 57;
+  if(f==='monthly'||f==='every 4 weeks')return 60;
+  return 63;
+}
+
 function renderScorecard(clients){
   const cont=document.getElementById('scorecard-content');
   const SLOT_COLORS_SC=['#E53093','#AD1E73','#6ED386'];
   cont.innerHTML='';
   clients.forEach((c,i)=>{
-    const hasData=c.sqft||c.cleaning||c.pricehr||c.idealhr||c.diff||c.idealcleaning;
+    // Auto-calculate ideal fields
+    const idealRate=getIdealRate(c.freq);
+    const cleaning=parseFloat(c.cleaning)||0;
+    const avgHrs=parseFloat(c.avgHours)||parseFloat(c.dur)||3;
+    const pricehr=cleaning>0&&avgHrs>0?parseFloat((cleaning/avgHrs).toFixed(2)):parseFloat(c.pricehr)||0;
+    const idealcleaning=parseFloat((idealRate*avgHrs).toFixed(2));
+    const diff=cleaning>0?parseFloat((pricehr-idealRate).toFixed(2)):null;
+
+    const hasData=c.sqft||cleaning||pricehr;
     const col=SLOT_COLORS_SC[i%SLOT_COLORS_SC.length];
-    const diff=parseFloat(c.diff)||0;
     const diffColor=diff>=0?'#1A6B2F':'#A32D2D';
     const diffBg=diff>=0?'#CFFFD7':'#FCEBEB';
     const card=document.createElement('div');
@@ -731,12 +747,13 @@ function renderScorecard(clients){
         ${c.sqft?`<span style="font-size:11px;color:#888;margin-left:auto;">${parseInt(c.sqft).toLocaleString()} sqft</span>`:''}
       </div>
       ${!hasData?'<p style="font-size:12px;color:#bbb;font-style:italic;">No scorecard data — edit client to add.</p>':`
+      <div style="font-size:10px;color:#888;margin-bottom:6px;">Ideal rate: <strong>$${idealRate}/hr</strong> (${c.freq||'Biweekly'})</div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
-        <div style="background:#FFF7FB;border-radius:8px;padding:8px 10px;"><div style="font-size:10px;color:#888;">Cleaning $</div><div style="font-size:15px;font-weight:600;color:#1a1a1a;">${c.cleaning?'$'+parseFloat(c.cleaning).toFixed(2):'—'}</div></div>
-        <div style="background:#FFF7FB;border-radius:8px;padding:8px 10px;"><div style="font-size:10px;color:#888;">Price/Hour</div><div style="font-size:15px;font-weight:600;color:#1a1a1a;">${c.pricehr?'$'+parseFloat(c.pricehr).toFixed(2):'—'}</div></div>
-        <div style="background:#FFF7FB;border-radius:8px;padding:8px 10px;"><div style="font-size:10px;color:#888;">Ideal/Hour $</div><div style="font-size:15px;font-weight:600;color:#1a1a1a;">${c.idealhr?'$'+parseFloat(c.idealhr).toFixed(2):'—'}</div></div>
-        <div style="background:#FFF7FB;border-radius:8px;padding:8px 10px;"><div style="font-size:10px;color:#888;">$ Ideal/Cleaning</div><div style="font-size:15px;font-weight:600;color:#1a1a1a;">${c.idealcleaning?'$'+parseFloat(c.idealcleaning).toFixed(2):'—'}</div></div>
-        <div style="background:${diffBg};border-radius:8px;padding:8px 10px;grid-column:span 2;"><div style="font-size:10px;color:#888;">Diferença $</div><div style="font-size:15px;font-weight:600;color:${diffColor};">${c.diff?(diff>=0?'+':'')+parseFloat(c.diff).toFixed(2):'—'}</div></div>
+        <div style="background:#FFF7FB;border-radius:8px;padding:8px 10px;"><div style="font-size:10px;color:#888;">Cleaning $</div><div style="font-size:15px;font-weight:600;color:#1a1a1a;">${cleaning?'$'+cleaning.toFixed(2):'—'}</div></div>
+        <div style="background:#FFF7FB;border-radius:8px;padding:8px 10px;"><div style="font-size:10px;color:#888;">Price/Hour</div><div style="font-size:15px;font-weight:600;color:#1a1a1a;">${pricehr?'$'+pricehr.toFixed(2):'—'}</div></div>
+        <div style="background:#FFF7FB;border-radius:8px;padding:8px 10px;"><div style="font-size:10px;color:#888;">Ideal/Hour $</div><div style="font-size:15px;font-weight:600;color:#1a1a1a;">$${idealRate}</div></div>
+        <div style="background:#FFF7FB;border-radius:8px;padding:8px 10px;"><div style="font-size:10px;color:#888;">$ Ideal/Cleaning</div><div style="font-size:15px;font-weight:600;color:#1a1a1a;">$${idealcleaning.toFixed(2)}</div></div>
+        <div style="background:${diffBg};border-radius:8px;padding:8px 10px;grid-column:span 2;"><div style="font-size:10px;color:#888;">Diferença $/hr</div><div style="font-size:15px;font-weight:600;color:${diffColor};">${diff!==null?(diff>=0?'+':'')+diff.toFixed(2)+'/hr':'—'}</div></div>
       </div>`}
     `;
     cont.appendChild(card);
