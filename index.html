@@ -286,7 +286,7 @@ body{font-family:'Sora',sans-serif;background:#FFF7FB;color:#1a1a1a;min-height:1
 </div>
 
 <script>
-const SK='simplify_v4';
+const SK='simplify_v5';
 const MK='simplify_gmaps_key';
 const SLOT_COLORS=['#E53093','#AD1E73','#6ED386','#E53093','#AD1E73','#6ED386'];
 let slotCount=0;
@@ -318,6 +318,8 @@ function initData(){
         if(imp.avgHours&&!client.avgHours){client.avgHours=imp.avgHours;updated=true;}
         if(imp.avgHours&&client.avgHours!==imp.avgHours&&!client._avgManual){client.avgHours=imp.avgHours;updated=true;}
         if(imp.prefDay&&!client.prefDay){client.prefDay=imp.prefDay;updated=true;}
+        if(imp.cleaning&&!client.cleaning){client.cleaning=imp.cleaning;updated=true;}
+        if(imp.pricehr&&!client.pricehr){client.pricehr=imp.pricehr;updated=true;}
       }
     });
     if(updated)saveClients(c);
